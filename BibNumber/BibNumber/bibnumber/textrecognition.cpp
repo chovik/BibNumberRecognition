@@ -278,7 +278,7 @@ int TextRecognizer::recognize(IplImage *input,
 		int s = (int) (0.05 * mat.rows); /* 5% of up-scaled size) */
 		cv::Mat elem = cv::getStructuringElement(cv::MORPH_ELLIPSE,
 				cv::Size(2 * s + 1, 2 * s + 1), cv::Point(s, s));
-		cv::erode(mat, mat, elem);
+		//cv::erode(mat, mat, elem);
 		cv::imwrite("bib-tess-input.png", mat);
 
 		// Pass it to Tesseract API
