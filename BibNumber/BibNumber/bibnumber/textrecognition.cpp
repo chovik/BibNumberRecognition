@@ -121,7 +121,7 @@ TextRecognizer::TextRecognizer() {
 	 pars_vals.push_back("F");*/
 	tess.Init(NULL, "eng", tesseract::OEM_DEFAULT, NULL, 0, &pars_keys,
 			&pars_vals, false);
-#if 0
+#if 1
 	tess.SetVariable("tessedit_char_whitelist", "0123456789");
 #endif
 	tess.SetVariable("tessedit_write_images", "true");

@@ -71,6 +71,10 @@ struct Chain {
 bool Point2dSort (Point2d const & lhs,
                   Point2d const & rhs);
 
+void AutoCanny(cv::Mat * img, cv::Mat * edge);
+
+double median(cv::Mat * channel);
+
 void strokeWidthTransform (IplImage * edgeImage,
                            IplImage * gradientX,
                            IplImage * gradientY,

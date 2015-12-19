@@ -326,11 +326,20 @@ void TextDetector::detect(IplImage * input,
 	// Convert to grayscale
 	IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 	cvCvtColor(input, grayImage, CV_RGB2GRAY);
+	cv::Mat gray;
+	cv::Mat inputMat(input, false);
+	cv::cvtColor(inputMat, gray, CV_RGB2GRAY);
 	// Create Canny Image
 	double threshold_low = 175;
 	double threshold_high = 320;
-	IplImage * edgeImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
-	cvCanny(grayImage, edgeImage, threshold_low, threshold_high, 3);
+	//IplImage * edgeImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
+	cv::Mat edge;
+	AutoCanny(&gray, &edge);
+	//cvCanny(grayImage, edgeImage, threshold_low, threshold_high, 3);
+	
+
+	IplImage* edgeImage = cvCloneImage(&(IplImage)edge);
+
 	cvSaveImage("canny.png", edgeImage);
 
 	// Create gradient X, gradient Y
@@ -409,6 +418,44 @@ void TextDetector::detect(IplImage * input,
 }
 
 } /* namespace textdetection */
+
+void AutoCanny(cv::Mat * img, cv::Mat * edge)
+{
+	double med = median(img);
+	double sigma = 0.33;
+	double lower = std::max(0.0, (1.0 - sigma) * med);
+	double upper = std::min(255.0, (1.0 + sigma) * med);
+	cv::Canny(*img, *edge, lower, upper);
+	//blurCannyImage.Save("blurCanny-c-" + index + ".jpg");
+}
+
+// Code is copied from https://gist.github.com/heisters/9cd68181397fbd35031b
+// calculates the median value of a single channel
+// based on https://github.com/arnaudgelas/OpenCVExamples/blob/master/cvMat/Statistics/Median/Median.cpp
+double median(cv::Mat * channel)
+{
+	double m = (channel->rows*channel->cols) / 2;
+	int bin = 0;
+	double med = -1.0;
+
+	int histSize = 256;
+	float range[] = { 0, 256 };
+	const float* histRange = { range };
+	bool uniform = true;
+	bool accumulate = false;
+	cv::Mat hist;
+
+	cv::calcHist(channel, 1, 0, cv::Mat(), hist, 1, &histSize, &histRange, uniform, accumulate);
+
+	for (int i = 0; i < histSize && med < 0.0; ++i)
+	{
+		bin += cvRound(hist.at< float >(i));
+		if (bin > m && med < 0.0)
+			med = i;
+	}
+
+	return med;
+}
 
 void strokeWidthTransform(IplImage * edgeImage, IplImage * gradientX,
 		IplImage * gradientY, const struct TextDetectionParams &params,
