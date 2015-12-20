@@ -45,6 +45,7 @@
 #define COM_MAX_DIM_RATIO (2.0)
 #define COM_MAX_DIST_RATIO (2.0)
 #define COM_MAX_ASPECT_RATIO (2.5)
+#define COM_MAX_WIDTH_TO_HEIGHT_RATIO (1.3)
 
 #undef min
 #undef max
@@ -785,6 +786,13 @@ void filterComponents(IplImage * SWTImage,
 
 		// check if the aspect ratio is between the allowed range
 		if (!ratio_within(length / width, COM_MAX_ASPECT_RATIO)) {
+			continue;
+		}
+
+		double widthToLength = width / length;
+
+		if (widthToLength < COM_MAX_WIDTH_TO_HEIGHT_RATIO)
+		{
 			continue;
 		}
 
