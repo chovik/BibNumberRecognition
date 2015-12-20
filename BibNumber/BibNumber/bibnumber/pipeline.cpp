@@ -105,7 +105,7 @@ int Pipeline::processImage(
 	std::vector<std::string> text;
 	struct TextDetectionParams params = {
 						1, /* darkOnLight */
-						15, /* maxStrokeLength */
+						30, /* maxStrokeLength */
 						11, /* minCharacterHeight */
 						100, /* maxImgWidthToTextRatio */
 						45, /* maxAngle */

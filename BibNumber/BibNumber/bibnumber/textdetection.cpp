@@ -44,7 +44,7 @@
 #define COM_MAX_MEDIAN_RATIO (3.0)
 #define COM_MAX_DIM_RATIO (2.0)
 #define COM_MAX_DIST_RATIO (2.0)
-#define COM_MAX_ASPECT_RATIO (2.5)
+#define COM_MAX_ASPECT_RATIO (3) //it must be great number because of digit 1
 #define COM_MAX_WIDTH_TO_HEIGHT_RATIO (1.3)
 
 #undef min
@@ -352,6 +352,7 @@ void TextDetector::detect(IplImage * input,
 	IplImage * gradientY = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
 	cvSobel(gaussianImage, gradientX, 1, 0, CV_SCHARR);
 	cvSobel(gaussianImage, gradientY, 0, 1, CV_SCHARR);
+
 	cvSmooth(gradientX, gradientX, 3, 3);
 	cvSmooth(gradientY, gradientY, 3, 3);
 	cvReleaseImage(&gaussianImage);
@@ -367,6 +368,13 @@ void TextDetector::detect(IplImage * input,
 	}
 	strokeWidthTransform(edgeImage, gradientX, gradientY, params, SWTImage,
 			rays);
+
+	cvConvertScale(gradientX, gradientX, 255., 0);
+	cvConvertScale(gradientY, gradientY, 255., 0);
+	cvSaveImage("gradientX.png", gradientX);
+	cvSaveImage("gradientY.png", gradientY);
+
+
 	cvSaveImage("SWT_0.png", SWTImage);
 	SWTMedianFilter(SWTImage, rays);
 	cvSaveImage("SWT_1.png", SWTImage);
@@ -385,6 +393,33 @@ void TextDetector::detect(IplImage * input,
 	// the inner vector contains the (y,x) of each pixel in that component.
 	std::vector<std::vector<Point2d> > components =
 			findLegallyConnectedComponents(SWTImage, rays);
+
+	IplImage * connectedComponentsImg = cvCreateImage(cvGetSize(input), 8U, 3);
+	//cvCopy(SWTImage, connectedComponentsImg, NULL);
+	for (std::vector<std::vector<Point2d> >::iterator it = components.begin();
+		it != components.end(); it++)
+	{
+		float mean, variance, median;
+		int minx, miny, maxx, maxy;
+		componentStats(SWTImage, (*it), mean, variance, median, minx, miny,
+			maxx, maxy);
+
+		Point2d bb1;
+		bb1.x = minx;
+		bb1.y = miny;
+
+		Point2d bb2;
+		bb2.x = maxx;
+		bb2.y = maxy;
+		std::pair<Point2d, Point2d> pair(bb1, bb2);
+
+		compBB.push_back(pair);
+	}
+
+	renderComponentsWithBoxes(SWTImage, components, compBB, connectedComponentsImg);
+	cvSaveImage("component-all.png", connectedComponentsImg);
+	cvReleaseImage(&connectedComponentsImg);
+	compBB.clear();
 
 	// Filter the components
 	std::vector<std::vector<Point2d> > validComponents;
@@ -632,7 +667,7 @@ std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
 								map.at(row * SWTImage->width + col + 1), g);
 				}
 				if (row + 1 < SWTImage->height) {
-					if (col + 1 < SWTImage->width) {
+					/*if (col + 1 < SWTImage->width) {
 						float right_down = CV_IMAGE_ELEM(SWTImage, float,
 								row + 1, col + 1);
 						if (right_down > 0
@@ -642,13 +677,13 @@ std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
 									map.at(
 											(row + 1) * SWTImage->width + col
 													+ 1), g);
-					}
+					}*/
 					float down = CV_IMAGE_ELEM(SWTImage, float, row + 1, col);
 					if (down > 0
 							&& ((*ptr) / down <= 3.0 || down / (*ptr) <= 3.0))
 						boost::add_edge(this_pixel,
 								map.at((row + 1) * SWTImage->width + col), g);
-					if (col - 1 >= 0) {
+					/*if (col - 1 >= 0) {
 						float left_down = CV_IMAGE_ELEM(SWTImage, float,
 								row + 1, col - 1);
 						if (left_down > 0
@@ -658,7 +693,7 @@ std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
 									map.at(
 											(row + 1) * SWTImage->width + col
 													- 1), g);
-					}
+					}*/
 				}
 			}
 			ptr++;
@@ -729,8 +764,10 @@ void filterComponents(IplImage * SWTImage,
 	compDimensions.reserve(components.size());
 	// bounding boxes
 	compBB.reserve(components.size());
+	int compIndex = -1;
 	for (std::vector<std::vector<Point2d> >::iterator it = components.begin();
 			it != components.end(); it++) {
+		compIndex++;
 		// compute the stroke width mean, variance, median
 		float mean, variance, median;
 		int minx, miny, maxx, maxy;
@@ -789,12 +826,12 @@ void filterComponents(IplImage * SWTImage,
 			continue;
 		}
 
-		double widthToLength = width / length;
+		//double widthToLength = width / length;
 
-		if (widthToLength < COM_MAX_WIDTH_TO_HEIGHT_RATIO)
-		{
-			continue;
-		}
+		//if (widthToLength < COM_MAX_WIDTH_TO_HEIGHT_RATIO)
+		//{
+		//	continue;
+		//}
 
 		// compute the diameter TODO finish
 		// compute dense representation of component
@@ -859,7 +896,11 @@ void filterComponents(IplImage * SWTImage,
 	for (unsigned int i = 0; i < validComponents.size(); i++) {
 		int count = 0;
 		for (unsigned int j = 0; j < validComponents.size(); j++) {
-			if (i != j) {
+			if (i != j)
+			{
+			std::pair<Point2d, Point2d> compBBi = compBB[i];
+			std::pair<Point2d, Point2d> compBBj = compBB[j];
+
 				if (compBB[i].first.x <= compCenters[j].x
 						&& compBB[i].second.x >= compCenters[j].x
 						&& compBB[i].first.y <= compCenters[j].y
@@ -868,13 +909,13 @@ void filterComponents(IplImage * SWTImage,
 				}
 			}
 		}
-		if (count < 2) {
+		/*if (count < 2) { - commented becuase small parts (1x*1px) caused that correct components were ignored*/
 			tempComp.push_back(validComponents[i]);
 			tempCenters.push_back(compCenters[i]);
 			tempMed.push_back(compMedians[i]);
 			tempDim.push_back(compDimensions[i]);
 			tempBB.push_back(compBB[i]);
-		}
+		//}
 	}
 	validComponents = tempComp;
 	compDimensions = tempDim;

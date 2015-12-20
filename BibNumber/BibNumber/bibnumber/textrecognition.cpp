@@ -196,6 +196,8 @@ int TextRecognizer::recognize(IplImage *input,
 		/* create copy of input image including only the selected components */
 		cv::Mat inputMat = cv::Mat(input);
 		cv::Mat grayMat = cv::Mat(grayImage);
+		cv::GaussianBlur(grayMat, grayMat, cv::Size(3, 3), 0);
+		cvSaveImage("grayImage-bib.bmp", grayImage);
 		cv::Mat componentsImg = cv::Mat::zeros(grayMat.rows, grayMat.cols,
 				grayMat.type());
 
@@ -228,6 +230,7 @@ int TextRecognizer::recognize(IplImage *input,
 			cv::threshold(componentRoi, thresholded, 0 // the value doesn't matter for Otsu thresholding
 					, 255 // we could choose any non-zero value. 255 (white) makes it easy to see the binary image
 					, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
+			cv::imwrite("componentRoi.png", componentRoi);
 
 #if 0
 			cv::Moments mu = cv::moments(thresholded, true);
@@ -333,7 +336,7 @@ int TextRecognizer::recognize(IplImage *input,
 					if (minHeight < params.modelVerifMinHeight) {
 						LOGL(LOG_TEXTREC,
 								"Reject " << s_out << " on small height");
-						break;
+						goto bibnumber_succ;
 					}
 
 					/* if we have an SVM Model, predict */
@@ -359,7 +362,7 @@ int TextRecognizer::recognize(IplImage *input,
 					if (prediction < 0.5) {
 						LOGL(LOG_TEXTREC,
 								"Reject " << s_out << " on low SVM prediction");
-						break;
+						goto bibnumber_succ;
 					}
 				}
 
@@ -412,7 +415,7 @@ int TextRecognizer::recognize(IplImage *input,
 								"Reject " << s_out << " on asymmetry");
 						std::cout << "Reject " << s_out << " on asymmetry"
 								<< std::endl;
-						break;
+						goto bibnumber_succ;
 					}
 				}
 
@@ -427,10 +430,11 @@ int TextRecognizer::recognize(IplImage *input,
 
 			} else {
 				LOGL(LOG_TEXTREC, "Reject as ROI outside boundaries");
-				break;
+				goto bibnumber_succ;
 			}
 
 			/* all fine, add this bib number */
+		bibnumber_succ:
 			text.push_back(s_out);
 			LOGL(LOG_TEXTREC, "Bib number: '" << s_out << "'");
 
