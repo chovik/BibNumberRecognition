@@ -44,7 +44,7 @@
 #define COM_MAX_MEDIAN_RATIO (3.0)
 #define COM_MAX_DIM_RATIO (2.0)
 #define COM_MAX_DIST_RATIO (2.0)
-#define COM_MAX_ASPECT_RATIO (3) //it must be great number because of digit 1
+#define COM_MAX_ASPECT_RATIO (4) //it must be great number because of digit 1
 #define COM_MAX_WIDTH_TO_HEIGHT_RATIO (1.3)
 
 #undef min
@@ -55,7 +55,7 @@ static inline int square(int x) {
 }
 
 static int inline ratio_within(float ratio, float max_ratio) {
-	return ((ratio < max_ratio) && (ratio > 1 / max_ratio));
+	return ((ratio <= max_ratio) && (ratio >= 1 / max_ratio));
 }
 
 std::vector<std::pair<CvPoint, CvPoint> > findBoundingBoxes(
@@ -328,7 +328,8 @@ void TextDetector::detect(IplImage * input,
 	IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 	cvCvtColor(input, grayImage, CV_RGB2GRAY);
 	cv::Mat gray;
-	cv::Mat inputMat(input, false);
+	cv::Mat inputMat(input, true);
+	//cv::GaussianBlur(inputMat, inputMat, cv::Size(5, 5), 0);
 	cv::cvtColor(inputMat, gray, CV_RGB2GRAY);
 	// Create Canny Image
 	double threshold_low = 175;
@@ -458,10 +459,10 @@ void TextDetector::detect(IplImage * input,
 void AutoCanny(cv::Mat * img, cv::Mat * edge)
 {
 	double med = median(img);
-	double sigma = 0.33;
+	double sigma = 0.27;
 	double lower = std::max(0.0, (1.0 - sigma) * med);
 	double upper = std::min(255.0, (1.0 + sigma) * med);
-	cv::Canny(*img, *edge, lower, upper);
+	cv::Canny(*img, *edge, lower, upper, 3, true);
 	//blurCannyImage.Save("blurCanny-c-" + index + ".jpg");
 }
 
@@ -1012,7 +1013,10 @@ std::vector<Chain> makeChains(IplImage * colorImage,
 	for (unsigned int i = 0; i < components.size(); i++) {
 		for (unsigned int j = i + 1; j < components.size(); j++) {
 			// TODO add color metric
-			float compMediansRatio = compMedians[i] / compMedians[j];
+			float iCompMedian = compMedians[i];
+			float jCompMedian = compMedians[j];
+
+			float compMediansRatio = iCompMedian / jCompMedian;
 			float compDimRatioY = ((float) compDimensions[i].y)
 					/ compDimensions[j].y;
 			float compDimRatioX = ((float) compDimensions[i].x)
@@ -1093,15 +1097,20 @@ std::vector<Chain> makeChains(IplImage * colorImage,
 		for (unsigned int i = 0; i < chains.size(); i++) {
 			for (unsigned int j = 0; j < chains.size(); j++) {
 				if (i != j) {
-					if (!chains[i].merged && !chains[j].merged
-							&& sharesOneEnd(chains[i], chains[j])) {
-						if (chains[i].p == chains[j].p) {
-							if (acos(
-									chains[i].direction.x
-											* -chains[j].direction.x
-											+ chains[i].direction.y
-													* -chains[j].direction.y)
-									< strictness) {
+					Chain iChain = chains[i];
+					Chain jChain = chains[j];
+					if (!iChain.merged && !jChain.merged
+						&& sharesOneEnd(iChain, jChain)) {
+						if (iChain.p == jChain.p) 
+						{
+							float diffDirectionX = iChain.direction.x
+								* -jChain.direction.x;
+							float diffDirectionY = iChain.direction.y
+								* -jChain.direction.y;
+							float diffSum = diffDirectionX + diffDirectionY;
+
+							float acosVal = SafeAcos(diffSum);
+							if (acosVal < strictness) {
 								/*      if (chains[i].p == chains[i].q || chains[j].p == chains[j].q) {
 								 std::cout << "CRAZY ERROR" << std::endl;
 								 } else if (chains[i].p == chains[j].p && chains[i].q == chains[j].q) {
@@ -1146,12 +1155,17 @@ std::vector<Chain> makeChains(IplImage * colorImage,
 								 std::stable_sort(chains.begin(), chains.end(), &chainSortLength);*/
 							}
 						} else if (chains[i].p == chains[j].q) {
-							if (acos(
-									chains[i].direction.x
-											* chains[j].direction.x
-											+ chains[i].direction.y
-													* chains[j].direction.y)
-									< strictness) {
+
+							float diffDirectionX = iChain.direction.x
+								* jChain.direction.x;
+							float diffDirectionY = iChain.direction.y
+								* jChain.direction.y;
+							float diffSum = diffDirectionX + diffDirectionY;
+
+							float acosVal = SafeAcos(diffSum);
+
+							if (acosVal < strictness) 
+							{
 								/*
 								 if (chains[i].p == chains[i].q || chains[j].p == chains[j].q) {
 								 std::cout << "CRAZY ERROR" << std::endl;
@@ -1199,13 +1213,16 @@ std::vector<Chain> makeChains(IplImage * colorImage,
 								 if (i == chains.size() - 1) i=-1;
 								 std::stable_sort(chains.begin(), chains.end(), &chainSortLength); */
 							}
-						} else if (chains[i].q == chains[j].p) {
-							if (acos(
-									chains[i].direction.x
-											* chains[j].direction.x
-											+ chains[i].direction.y
-													* chains[j].direction.y)
-									< strictness) {
+						} else if (chains[i].q == chains[j].p) 
+						{
+							float diffDirectionX = iChain.direction.x
+								* jChain.direction.x;
+							float diffDirectionY = iChain.direction.y
+								* jChain.direction.y;
+							float diffSum = diffDirectionX + diffDirectionY;
+
+							float acosVal = SafeAcos(diffSum);
+							if (acosVal < strictness) {
 								/*                           if (chains[i].p == chains[i].q || chains[j].p == chains[j].q) {
 								 std::cout << "CRAZY ERROR" << std::endl;
 								 } else if (chains[i].p == chains[j].p && chains[i].q == chains[j].q) {
@@ -1251,9 +1268,6 @@ std::vector<Chain> makeChains(IplImage * colorImage,
 								 std::stable_sort(chains.begin(), chains.end(), &chainSortLength); */
 							}
 						} else if (chains[i].q == chains[j].q) {
-							
-							Chain iChain = chains[i];
-							Chain jChain = chains[j];
 
 							float diffDirectionX = iChain.direction.x
 								* -jChain.direction.x;

@@ -110,7 +110,7 @@ int Pipeline::processImage(
 						100, /* maxImgWidthToTextRatio */
 						45, /* maxAngle */
 						img.rows * 10/100, /* topBorder: discard top 10% */
-						img.rows * 5/100,  /* bottomBorder: discard bottom 5% */
+						img.rows * 2/100,  /* bottomBorder: discard bottom 5% */
 						3, /* min chain len */
 						0, /* verify with SVM model up to this chain len */
 						0, /* height needs to be this large to verify with model */
