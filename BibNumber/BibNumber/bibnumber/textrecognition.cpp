@@ -230,7 +230,69 @@ int TextRecognizer::recognize(IplImage *input,
 			cv::threshold(componentRoi, thresholded, 0 // the value doesn't matter for Otsu thresholding
 					, 255 // we could choose any non-zero value. 255 (white) makes it easy to see the binary image
 					, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
-			cv::imwrite("componentRoi.png", componentRoi);
+
+			IplImage * thresholdedImage = cvCreateImage(cvSize(thresholded.cols, thresholded.rows), IPL_DEPTH_32F, 1);
+
+			for (int row = 0; row < thresholded.rows; row++)
+			{
+				for (int col = 0; col < thresholded.cols; col++)
+				{
+					CV_IMAGE_ELEM(thresholdedImage, float, row, col) = thresholded.at<byte>(row, col);
+				}
+			}
+			//IplImage* thresholdedImage = cvCloneImage(&(IplImage)thresholded);
+			cvSaveImage("thresholdedImage-cloned.png", thresholdedImage);
+			std::vector<Ray> rays;
+			std::vector<std::vector<Point2d> > components = findLegallyConnectedComponents(thresholdedImage, rays);
+
+			int maxInnerComponentArea = 0;
+			int maxInnerComponentIndex = -1;
+			int currentInnerComponentIndex = -1;
+			for (std::vector<std::vector<Point2d> >::iterator it = components.begin();
+				it != components.end(); it++)
+			{
+				currentInnerComponentIndex++;
+				float mean, variance, median;
+				int minx, miny, maxx, maxy;
+				componentStats(thresholdedImage, (*it), mean, variance, median, minx, miny,
+					maxx, maxy);
+
+				Point2d bb1;
+				bb1.x = minx;
+				bb1.y = miny;
+
+				Point2d bb2;
+				bb2.x = maxx;
+				bb2.y = maxy;
+				std::pair<Point2d, Point2d> pair(bb1, bb2);
+
+				int width = maxx - minx + 1;
+				int height = maxy - miny + 1;
+
+				int area = width * height;
+
+				if (area > maxInnerComponentArea)
+				{
+					maxInnerComponentArea = area;
+					maxInnerComponentIndex = currentInnerComponentIndex;
+				}
+			}
+
+			IplImage * thresholdedMaxComp = cvCreateImage(cvSize(componentRoi.cols, componentRoi.rows), IPL_DEPTH_8U, 1);
+			cvSet(thresholdedMaxComp, cvScalar(0));
+
+			if (maxInnerComponentIndex >= 0)
+			{
+				std::vector<Point2d> maxComp = components[maxInnerComponentIndex];
+				for (std::vector<Point2d>::iterator pit = maxComp.begin(); pit != maxComp.end(); pit++) 
+				{
+					CV_IMAGE_ELEM(thresholdedMaxComp, byte, pit->y, pit->x) = 255;
+				}
+			}
+
+			cvSaveImage("thresholdedMaxComp.png", thresholdedMaxComp);
+
+			cvSaveImage("componentRoi.png", thresholdedImage);
 
 #if 0
 			cv::Moments mu = cv::moments(thresholded, true);
@@ -239,9 +301,11 @@ int TextRecognizer::recognize(IplImage *input,
 #endif
 			cv::imwrite("thresholded.png", thresholded);
 
-			cv::threshold(componentRoi, componentsImg(roi), 0 // the value doesn't matter for Otsu thresholding
-					, 255 // we could choose any non-zero value. 255 (white) makes it easy to see the binary image
-					, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
+			cv::Mat thresholdMat(thresholdedMaxComp);
+			thresholdMat.copyTo(componentsImg(roi));
+			//cv::threshold(thresholdMat, componentsImg(roi), 0 // the value doesn't matter for Otsu thresholding
+			//		, 255 // we could choose any non-zero value. 255 (white) makes it easy to see the binary image
+			//		, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
 		}
 		cv::imwrite("bib-components.png", componentsImg);
 
