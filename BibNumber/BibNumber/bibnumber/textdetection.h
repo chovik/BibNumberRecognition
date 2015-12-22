@@ -114,6 +114,8 @@ std::vector<Chain> makeChains( IplImage * colorImage,
                  std::vector<Point2d> & compDimensions,
                  const struct TextDetectionParams &params);
 
+float SafeAcos(float x);
+
 namespace textdetection {
 
 

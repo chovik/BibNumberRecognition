@@ -1251,12 +1251,19 @@ std::vector<Chain> makeChains(IplImage * colorImage,
 								 std::stable_sort(chains.begin(), chains.end(), &chainSortLength); */
 							}
 						} else if (chains[i].q == chains[j].q) {
-							if (acos(
-									chains[i].direction.x
-											* -chains[j].direction.x
-											+ chains[i].direction.y
-													* -chains[j].direction.y)
-									< strictness) {
+							
+							Chain iChain = chains[i];
+							Chain jChain = chains[j];
+
+							float diffDirectionX = iChain.direction.x
+								* -jChain.direction.x;
+							float diffDirectionY = iChain.direction.y
+								* -jChain.direction.y;
+							float diffSum = diffDirectionX + diffDirectionY;
+
+							float acosVal = SafeAcos(diffSum);
+
+							if (acosVal < strictness) {
 								/*           if (chains[i].p == chains[i].q || chains[j].p == chains[j].q) {
 								 std::cout << "CRAZY ERROR" << std::endl;
 								 } else if (chains[i].p == chains[j].p && chains[i].q == chains[j].q) {
@@ -1367,4 +1374,11 @@ std::vector<Chain> makeChains(IplImage * colorImage,
 	LOGL(LOG_CHAINS, chains.size() << " chains after merging");
 
 	return chains;
+}
+
+float SafeAcos(float x)
+{
+	if (x < -1.0) x = -1.0;
+	else if (x > 1.0) x = 1.0;
+	return acos(x);
 }
