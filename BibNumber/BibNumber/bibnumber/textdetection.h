@@ -57,6 +57,7 @@ struct TextDetectionParams {
 	unsigned int minChainLen;
 	int modelVerifLenCrit;
 	int modelVerifMinHeight;
+	int minCCHeight;
 };
 
 struct Chain {
@@ -87,7 +88,8 @@ void SWTMedianFilter (IplImage * SWTImage,
 
 std::vector< std::vector<Point2d> >
 findLegallyConnectedComponents (IplImage * SWTImage,
-                                std::vector<Ray> & rays);
+                                std::vector<Ray> & rays,
+								IplImage * gray);
 
 std::vector< std::vector<Point2d> >
 findLegallyConnectedComponentsRAY (IplImage * SWTImage,
@@ -96,7 +98,8 @@ findLegallyConnectedComponentsRAY (IplImage * SWTImage,
 void componentStats(IplImage * SWTImage,
                                         const std::vector<Point2d> & component,
                                         float & mean, float & variance, float & median,
-                                        int & minx, int & miny, int & maxx, int & maxy);
+                                        int & minx, int & miny, int & maxx, int & maxy,
+										float & meanColor, float & varianceColor, float & medianColor, IplImage * img);
 
 void filterComponents(IplImage * SWTImage,
                       std::vector<std::vector<Point2d> > & components,
@@ -105,7 +108,8 @@ void filterComponents(IplImage * SWTImage,
                       std::vector<float> & compMedians,
                       std::vector<Point2d> & compDimensions,
                       std::vector<std::pair<Point2d,Point2d> > & compBB,
-                      const struct TextDetectionParams &params);
+                      const struct TextDetectionParams &params,
+					  IplImage * img);
 
 std::vector<Chain> makeChains( IplImage * colorImage,
                  std::vector<std::vector<Point2d> > & components,
@@ -115,6 +119,13 @@ std::vector<Chain> makeChains( IplImage * colorImage,
                  const struct TextDetectionParams &params);
 
 float SafeAcos(float x);
+
+void EdgePreservingSmoothing(IplImage * img, IplImage * output);
+byte ToByte(float value);
+void GetNeighbours(Point2d point, std::vector<Point2d> & neighbours);
+int ComputeManhattanColorDistance(IplImage * img, Point2d center, float p);
+Point2d createPoint2d(int x, int y);
+
 
 namespace textdetection {
 

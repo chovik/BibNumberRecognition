@@ -196,7 +196,7 @@ int TextRecognizer::recognize(IplImage *input,
 		/* create copy of input image including only the selected components */
 		cv::Mat inputMat = cv::Mat(input);
 		cv::Mat grayMat = cv::Mat(grayImage);
-		cv::GaussianBlur(grayMat, grayMat, cv::Size(3, 3), 0);
+		//cv::GaussianBlur(grayMat, grayMat, cv::Size(3, 3), 0);
 		cvSaveImage("grayImage-bib.bmp", grayImage);
 		cv::Mat componentsImg = cv::Mat::zeros(grayMat.rows, grayMat.cols,
 				grayMat.type());
@@ -233,6 +233,8 @@ int TextRecognizer::recognize(IplImage *input,
 
 			IplImage * thresholdedImage = cvCreateImage(cvSize(thresholded.cols, thresholded.rows), IPL_DEPTH_32F, 1);
 
+			IplImage* thresh = cvCloneImage(&(IplImage)thresholded);
+
 			for (int row = 0; row < thresholded.rows; row++)
 			{
 				for (int col = 0; col < thresholded.cols; col++)
@@ -243,7 +245,7 @@ int TextRecognizer::recognize(IplImage *input,
 			//IplImage* thresholdedImage = cvCloneImage(&(IplImage)thresholded);
 			cvSaveImage("thresholdedImage-cloned.png", thresholdedImage);
 			std::vector<Ray> rays;
-			std::vector<std::vector<Point2d> > components = findLegallyConnectedComponents(thresholdedImage, rays);
+			std::vector<std::vector<Point2d> > components = findLegallyConnectedComponents(thresholdedImage, rays, thresh);
 
 			int maxInnerComponentArea = 0;
 			int maxInnerComponentIndex = -1;
@@ -254,8 +256,10 @@ int TextRecognizer::recognize(IplImage *input,
 				currentInnerComponentIndex++;
 				float mean, variance, median;
 				int minx, miny, maxx, maxy;
+				float meanColor, varianceColor, medianColor;
 				componentStats(thresholdedImage, (*it), mean, variance, median, minx, miny,
-					maxx, maxy);
+					maxx, maxy,
+					meanColor, varianceColor, medianColor, thresh);
 
 				Point2d bb1;
 				bb1.x = minx;

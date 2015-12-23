@@ -327,6 +327,11 @@ void TextDetector::detect(IplImage * input,
 	// Convert to grayscale
 	IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 	cvCvtColor(input, grayImage, CV_RGB2GRAY);
+	IplImage * edgeSmoothedImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
+	EdgePreservingSmoothing(grayImage, edgeSmoothedImage);
+
+	cvSaveImage("edgeSmoothedImage.png", edgeSmoothedImage);
+
 	cv::Mat gray;
 	cv::Mat inputMat(input, true);
 	//cv::GaussianBlur(inputMat, inputMat, cv::Size(5, 5), 0);
@@ -347,7 +352,7 @@ void TextDetector::detect(IplImage * input,
 	// Create gradient X, gradient Y
 	IplImage * gaussianImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F,
 			1);
-	cvConvertScale(grayImage, gaussianImage, 1. / 255., 0);
+	cvConvertScale(edgeSmoothedImage, gaussianImage, 1. / 255., 0);
 	cvSmooth(gaussianImage, gaussianImage, CV_GAUSSIAN, 5, 5);
 	IplImage * gradientX = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
 	IplImage * gradientY = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
@@ -392,8 +397,9 @@ void TextDetector::detect(IplImage * input,
 	// Calculate legally connected components from SWT and gradient image.
 	// return type is a vector of vectors, where each outer vector is a component and
 	// the inner vector contains the (y,x) of each pixel in that component.
+	cvSaveImage("grayImg.png", grayImage);
 	std::vector<std::vector<Point2d> > components =
-			findLegallyConnectedComponents(SWTImage, rays);
+		findLegallyConnectedComponents(SWTImage, rays, edgeSmoothedImage);
 
 	IplImage * connectedComponentsImg = cvCreateImage(cvGetSize(input), 8U, 3);
 	//cvCopy(SWTImage, connectedComponentsImg, NULL);
@@ -401,9 +407,11 @@ void TextDetector::detect(IplImage * input,
 		it != components.end(); it++)
 	{
 		float mean, variance, median;
+		float meanColor, varianceColor, medianColor;
 		int minx, miny, maxx, maxy;
 		componentStats(SWTImage, (*it), mean, variance, median, minx, miny,
-			maxx, maxy);
+			maxx, maxy,
+			meanColor, varianceColor, medianColor, edgeSmoothedImage);
 
 		Point2d bb1;
 		bb1.x = minx;
@@ -428,7 +436,7 @@ void TextDetector::detect(IplImage * input,
 	std::vector<float> compMedians;
 	std::vector<Point2d> compDimensions;
 	filterComponents(SWTImage, components, validComponents, compCenters,
-			compMedians, compDimensions, compBB, params);
+		compMedians, compDimensions, compBB, params, edgeSmoothedImage);
 
 	IplImage * output3 = cvCreateImage(cvGetSize(input), 8U, 3);
 	renderComponentsWithBoxes(SWTImage, validComponents, compBB, output3);
@@ -630,7 +638,8 @@ bool Point2dSort(const Point2d &lhs, const Point2d &rhs) {
 }
 
 std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
-		IplImage * SWTImage, std::vector<Ray> &rays) {
+		IplImage * SWTImage, std::vector<Ray> &rays,
+		IplImage * gray) {
 	boost::unordered_map<int, int> map;
 	boost::unordered_map<int, Point2d> revmap;
 
@@ -657,15 +666,37 @@ std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
 	for (int row = 0; row < SWTImage->height; row++) {
 		float * ptr = (float*) (SWTImage->imageData + row * SWTImage->widthStep);
 		for (int col = 0; col < SWTImage->width; col++) {
-			if (*ptr > 0) {
+			float val = *ptr;
+			if (val > 0) {
+				float currentPixelColor = CV_IMAGE_ELEM(gray, byte, row, col);
 				// check pixel to the right, right-down, down, left-down
 				int this_pixel = map[row * SWTImage->width + col];
 				if (col + 1 < SWTImage->width) {
 					float right = CV_IMAGE_ELEM(SWTImage, float, row, col + 1);
-					if (right > 0
-							&& ((*ptr) / right <= 3.0 || right / (*ptr) <= 3.0))
-						boost::add_edge(this_pixel,
-								map.at(row * SWTImage->width + col + 1), g);
+					
+
+					if (right > 0)
+					{
+						float rightPixelColor = CV_IMAGE_ELEM(gray, byte, row, col + 1);
+						float colorDiff = abs(currentPixelColor - rightPixelColor);
+						bool hasSimiliarStrokeWidth = false;
+
+						if (right > val)
+						{
+							hasSimiliarStrokeWidth = (right / val <= 3.0);
+						}
+						else
+						{
+							hasSimiliarStrokeWidth = (val / right <= 3.0);
+						}
+
+						if (hasSimiliarStrokeWidth)
+						{
+							boost::add_edge(this_pixel,
+											map.at(row * SWTImage->width + col + 1), g);
+						}
+					}
+						
 				}
 				if (row + 1 < SWTImage->height) {
 					/*if (col + 1 < SWTImage->width) {
@@ -680,10 +711,30 @@ std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
 													+ 1), g);
 					}*/
 					float down = CV_IMAGE_ELEM(SWTImage, float, row + 1, col);
-					if (down > 0
-							&& ((*ptr) / down <= 3.0 || down / (*ptr) <= 3.0))
-						boost::add_edge(this_pixel,
-								map.at((row + 1) * SWTImage->width + col), g);
+
+					if (down > 0)
+					{
+						float downPixelColor = CV_IMAGE_ELEM(gray, byte, row + 1, col);
+						bool hasSimiliarStrokeWidth = false;
+
+						if (down > val)
+						{
+							hasSimiliarStrokeWidth = (down / val <= 3.0);
+						}
+						else
+						{
+							hasSimiliarStrokeWidth = (val / down <= 3.0);
+						}
+
+						float colorDiff = abs(currentPixelColor - downPixelColor);
+
+						if (hasSimiliarStrokeWidth)
+						{
+							boost::add_edge(this_pixel,
+											map.at((row + 1) * SWTImage->width + col), g);
+						}
+					}
+						
 					/*if (col - 1 >= 0) {
 						float left_down = CV_IMAGE_ELEM(SWTImage, float,
 								row + 1, col - 1);
@@ -721,35 +772,197 @@ std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
 	return components;
 }
 
+Point2d createPoint2d(int x, int y)
+{
+	Point2d p;
+
+	p.x = x;
+	p.y = y;
+
+	return p;
+}
+
+int ComputeManhattanColorDistance(IplImage * img, Point2d center, float p)
+{
+	std::vector<Point2d> neighbours;
+	GetNeighbours(center, neighbours);
+	float centerValue = CV_IMAGE_ELEM(img, byte, center.y, center.x);
+	std::vector<float> coeficients;
+	float sumCoeficients = 0;
+
+	for (int dIndex = 0; dIndex < 8; dIndex++)
+	{
+		Point2d point = neighbours[dIndex];
+		float pointValue = CV_IMAGE_ELEM(img, byte, point.y, point.x);
+		float d = abs(centerValue - pointValue) / 255.0;
+		float c = pow((1 - d), p);
+		coeficients.push_back(c);
+		sumCoeficients += c;
+	}
+
+	float newValue = 0;
+
+	for (int dIndex = 0; dIndex < 8; dIndex++)
+	{
+		Point2d point = neighbours[dIndex];
+		float pointValue = CV_IMAGE_ELEM(img, byte, point.y, point.x);
+		newValue += round(coeficients[dIndex] * (1 / sumCoeficients) * pointValue);
+	}
+
+	if (newValue > 255)
+	{
+		newValue = 255;
+	}
+
+	return newValue;
+}
+
+void EdgePreservingSmoothing(IplImage * img, IplImage * output)
+{
+	int cols = img->width;
+	int rows = img->height;
+
+	for (int i = 0; i < 1; i++)
+	{
+		for (int rowIndex = 0; rowIndex < rows; rowIndex++)
+		{
+			for (int columnIndex = 0; columnIndex < cols; columnIndex++)
+			{
+				if (rowIndex == 0
+					|| rowIndex == rows - 1
+					|| columnIndex == 0
+					|| columnIndex == cols - 1)
+				{
+					CV_IMAGE_ELEM(img, byte, rowIndex, columnIndex) = 0;
+					continue;
+				}
+
+				byte oldValue = CV_IMAGE_ELEM(img, byte, rowIndex, columnIndex);
+
+				if (oldValue == 0)
+				{
+					//var newValue = ComputeManhattanColorDistancesBW(img, new System.Drawing.Point(rowIndex, columnIndex), 10);
+					CV_IMAGE_ELEM(output, byte, rowIndex, columnIndex) = oldValue;
+				}
+				else
+				{
+					int newValue = ComputeManhattanColorDistance(img, createPoint2d(columnIndex, rowIndex), 10);
+					CV_IMAGE_ELEM(output, byte, rowIndex, columnIndex) = ToByte(newValue);
+				}
+			}
+		}
+	}
+}
+
+byte ToByte(float value)
+{
+	int rounded = (int)round(value);
+
+	if (rounded > 255)
+	{
+		rounded = 255;
+	}
+	else if (rounded < 0)
+	{
+		rounded = 0;
+	}
+
+	return (byte)rounded;
+}
+
+
+void GetNeighbours(Point2d point, std::vector<Point2d> & neighbours)
+{
+	neighbours.clear();
+
+	neighbours.push_back(createPoint2d(
+		point.x - 1,
+		point.y - 1));
+
+	neighbours.push_back(createPoint2d(
+		point.x,
+		point.y - 1));
+
+	neighbours.push_back(createPoint2d(
+		point.x + 1,
+		point.y - 1)); 
+		
+	neighbours.push_back(createPoint2d(
+		point.x - 1,
+		point.y));
+
+	neighbours.push_back(createPoint2d(
+		point.x,
+		point.y));
+
+	neighbours.push_back(createPoint2d(
+		point.x + 1,
+		point.y));
+
+	neighbours.push_back(createPoint2d(
+		point.x - 1,
+		point.y + 1));
+
+	neighbours.push_back(createPoint2d(
+		point.x,
+		point.y + 1));
+
+	neighbours.push_back(createPoint2d(
+		point.x + 1,
+		point.y + 1));
+}
+
 void componentStats(IplImage * SWTImage, const std::vector<Point2d> & component,
 		float & mean, float & variance, float & median, int & minx, int & miny,
-		int & maxx, int & maxy) {
+		int & maxx, int & maxy,
+		float & meanColor, float & varianceColor, float & medianColor, IplImage * img) {
 	std::vector<float> temp;
+	std::vector<float> tempColor;
 	temp.reserve(component.size());
+	tempColor.reserve(component.size());
 	mean = 0;
 	variance = 0;
 	minx = 1000000;
 	miny = 1000000;
 	maxx = 0;
 	maxy = 0;
+
+	meanColor = 0;
+	varianceColor = 0;
+	medianColor = 0;
+
 	for (std::vector<Point2d>::const_iterator it = component.begin();
 			it != component.end(); it++) {
 		float t = CV_IMAGE_ELEM(SWTImage, float, it->y, it->x);
+		float color = CV_IMAGE_ELEM(img, byte, it->y, it->x);
 		mean += t;
+		meanColor += color;
 		temp.push_back(t);
+		tempColor.push_back(color);
 		miny = std::min(miny, it->y);
 		minx = std::min(minx, it->x);
 		maxy = std::max(maxy, it->y);
 		maxx = std::max(maxx, it->x);
 	}
 	mean = mean / ((float) component.size());
+	meanColor = meanColor / ((float)component.size());
 	for (std::vector<float>::const_iterator it = temp.begin(); it != temp.end();
 			it++) {
 		variance += (*it - mean) * (*it - mean);
 	}
+
+	for (std::vector<float>::const_iterator it = tempColor.begin(); it != tempColor.end();
+		it++) {
+		varianceColor += (*it - meanColor) * (*it - meanColor);
+	}
+
+	
 	variance = variance / ((float) component.size());
+	varianceColor = varianceColor / ((float)component.size());
 	std::sort(temp.begin(), temp.end());
+	std::sort(tempColor.begin(), tempColor.end());
 	median = temp[temp.size() / 2];
+	medianColor = tempColor[tempColor.size() / 2];
 }
 #define NO_FILTER
 void filterComponents(IplImage * SWTImage,
@@ -758,7 +971,8 @@ void filterComponents(IplImage * SWTImage,
 		std::vector<Point2dFloat> & compCenters,
 		std::vector<float> & compMedians, std::vector<Point2d> & compDimensions,
 		std::vector<std::pair<Point2d, Point2d> > & compBB,
-		const struct TextDetectionParams &params) {
+		const struct TextDetectionParams &params,
+		IplImage * img) {
 	validComponents.reserve(components.size());
 	compCenters.reserve(components.size());
 	compMedians.reserve(components.size());
@@ -771,9 +985,10 @@ void filterComponents(IplImage * SWTImage,
 		compIndex++;
 		// compute the stroke width mean, variance, median
 		float mean, variance, median;
+		float meanColor, varianceColor, medianColor;
 		int minx, miny, maxx, maxy;
 		componentStats(SWTImage, (*it), mean, variance, median, minx, miny,
-				maxx, maxy);
+			maxx, maxy, meanColor, varianceColor, medianColor, img);
 #ifndef NO_FILTER
 		// check if variance is less than half the mean
 		if (variance > 0.5 * mean) {
@@ -781,11 +996,29 @@ void filterComponents(IplImage * SWTImage,
 		}
 #endif
 
+		/*for (std::vector<Point2d>::iterator currentIt = it->begin(); currentIt != it->end(); currentIt++)
+		{
+			if (it->size() > 1 && (currentIt != it->end() - 1))
+			{
+				byte currentValue = CV_IMAGE_ELEM(img, byte, currentIt->y, currentIt->x);
+				std::vector<Point2d>::iterator nextIt = currentIt + 1;
+				byte nextValue = CV_IMAGE_ELEM(img, byte, nextIt->y, nextIt->x);
+				byte diff = abs(currentValue - nextValue);
+
+			}
+			
+		}*/
+
 		float length = (float) (maxx - minx + 1);
 		float width = (float) (maxy - miny + 1);
 
 		// check font height
 		if (width > 300) {
+			continue;
+		}
+
+		if (width < params.minCCHeight)
+		{
 			continue;
 		}
 
