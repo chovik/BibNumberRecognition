@@ -1,0 +1,102 @@
+﻿@model BibNumberWeb.PhotoAlbum
+
+@{
+    ViewBag.Title = "Details";
+}
+
+@section CSS
+{
+    <link rel="stylesheet" href="http://blueimp.github.io/Gallery/css/blueimp-gallery.min.css" />
+    @Styles.Render("~/Content/image-gallery-css")
+}
+
+@section scripts
+{
+    <script src="http://blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js"></script>
+    @Scripts.Render("~/bundles/image-gallery")
+}
+
+<h2>Details</h2>
+
+<form method="post"
+      action="@Url.Action("Search", "PhotoAlbums")/@Model.Id/">
+    <div>
+        <label for="SearchQuery">Search:</label>
+        <input type="text" name="SearchQuery" value="" style="color:black"/>
+    </div>
+</form>
+
+        <div class="container">
+            <br>
+            <!-- The container for the list of example images -->
+            <div id="links">
+                @foreach (var photo in Model.Photos)
+                {
+                    <a href="@photo.Url" title="@photo.BibNumbersAsString" data-gallery="">
+                        <img src="@photo.ThumbnailUrl" />
+                    </a>
+                }
+            </div>
+            <br>
+        </div>
+        <!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->
+        <div id="blueimp-gallery" class="blueimp-gallery">
+            <!-- The container for the modal slides -->
+            <div class="slides"></div>
+            <!-- Controls for the borderless lightbox -->
+            <h3 class="title"></h3>
+            <a class="prev">‹</a>
+            <a class="next">›</a>
+            <a class="close">×</a>
+            <a class="play-pause"></a>
+            <ol class="indicator"></ol>
+            <!-- The modal dialog, which will be used to wrap the lightbox content -->
+            <div class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title"></h4>
+                        </div>
+                        <div class="modal-body next"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left prev">
+                                <i class="glyphicon glyphicon-chevron-left"></i>
+                                Previous
+                            </button>
+                            <button type="button" class="btn btn-primary next">
+                                Next
+                                <i class="glyphicon glyphicon-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*<div>
+                <h4>PhotoAlbum</h4>
+                <hr />
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Url)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Url)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Name)
+                    </dd>
+
+                </dl>
+            </div>*@
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>

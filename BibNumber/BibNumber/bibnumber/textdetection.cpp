@@ -16,6 +16,8 @@
  You should have received a copy of the GNU General Public License
  along with DetectText.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include "..\stdafx.h"
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/connected_components.hpp>
