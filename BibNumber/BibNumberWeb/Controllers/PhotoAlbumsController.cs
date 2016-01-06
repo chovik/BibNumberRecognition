@@ -54,7 +54,7 @@ namespace BibNumberWeb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Url,Name")] PhotoAlbum photoAlbum)
+        public async Task<ActionResult> Create([Bind(Include = "Url,Name")] PhotoAlbum photoAlbum)
         {
             if (ModelState.IsValid)
             {
@@ -79,14 +79,18 @@ namespace BibNumberWeb.Controllers
                         photoModel.BibNumbers.Add("392");
 
                         photoAlbum.Photos.Add(photoModel);
-
-                        DetectBibNumbers(photoModel);
                         
                     }
                 }
 
                 db.PhotoAlbumSet.Add(photoAlbum);
                 await db.SaveChangesAsync();
+
+                foreach(var photo in photoAlbum.Photos)
+                {
+                    await DetectBibNumbers(photo);
+                }
+
                 return RedirectToAction("Index");
             }
 
@@ -183,31 +187,19 @@ namespace BibNumberWeb.Controllers
 
         public async Task DetectBibNumbers(Photo photo)
         {
-            //Task.Run(() =>
-            //    {
-                    try
-                    {
-                        CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["AzureStorageConnection"].ConnectionString);
-                        CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
-                        CloudQueue queue = queueClient.GetQueueReference("detectbibnumbersqueue");
-                        queue.CreateIfNotExists();
-                        var photoJson = await JsonConvert.SerializeObjectAsync(photo);
-                        queue.AddMessage(new CloudQueueMessage(photoJson));
-                        using(WebClient webClient = new WebClient())
-                        {
-                            var tempFile = Path.GetTempFileName();
-                            webClient.DownloadFile(photo.Url, tempFile);
-                            //BibNumberWrapper.Class1 c = new BibNumberWrapper.Class1();
-                            //double result = c.DetectNumbers(tempFile);
-                            //var d = result;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
+            try
+            {
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse("UseDevelopmentStorage=true");//ConfigurationManager.ConnectionStrings["AzureStorageConnection"].ConnectionString);
+                CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+                CloudQueue queue = queueClient.GetQueueReference("detectbibnumbersqueue");
+                queue.CreateIfNotExists();
+                var photoJson = await JsonConvert.SerializeObjectAsync(photo);
+                queue.AddMessage(new CloudQueueMessage(photoJson));
+            }
+            catch (Exception ex)
+            {
 
-                    }
-                //});
-            
+            }            
         }
 
         protected override void Dispose(bool disposing)

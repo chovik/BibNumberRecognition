@@ -9,6 +9,7 @@
 
 namespace BibNumberWeb
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -20,6 +21,7 @@ namespace BibNumberWeb
         public string ThumbnailUrl { get; set; }
         //public string BibNumbersAsString { get; set; }
     
+        [JsonIgnore]
         public virtual PhotoAlbum PhotoAlbum { get; set; }
     }
 }

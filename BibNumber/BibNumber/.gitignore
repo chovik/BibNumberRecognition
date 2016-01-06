@@ -1,0 +1,7 @@
+*.png
+*.jpg
+*.tif
+!samples/*.jpg
+!samples/0017-IMG_0035.out/*.png
+*.d
+*.o
