@@ -271,13 +271,19 @@ void renderChainsWithBoxes(IplImage * SWTImage,
 
 	renderComponents(SWTImage, componentsRed, outTemp);
 
+	std::cout << "After chaining 2 --- " << std::endl;
+
 	bb = findBoundingBoxes(chains, compBB, outTemp);
+
+	std::cout << "After chaining 3 --- " << std::endl;
 
 	IplImage * out = cvCreateImage(cvGetSize(output), IPL_DEPTH_8U, 1);
 	cvConvertScale(outTemp, out, 255, 0);
 	cvCvtColor(out, output, CV_GRAY2RGB);
 	cvReleaseImage(&out);
 	cvReleaseImage(&outTemp);
+
+	std::cout << "After chaining 4 --- " << std::endl;
 }
 
 void renderChains(IplImage * SWTImage,
@@ -326,6 +332,12 @@ void TextDetector::detect(IplImage * input,
 		std::vector<std::pair<CvPoint, CvPoint> > &chainBB) {
 	assert(input->depth == IPL_DEPTH_8U);
 	assert(input->nChannels == 3);
+
+	LARGE_INTEGER start, finish, freq;
+	QueryPerformanceFrequency(&freq);
+	QueryPerformanceCounter(&start);
+	// Do something
+	
 	// Convert to grayscale
 	IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 	cvCvtColor(input, grayImage, CV_RGB2GRAY);
@@ -374,13 +386,24 @@ void TextDetector::detect(IplImage * input,
 			*ptr++ = -1;
 		}
 	}
+
+	QueryPerformanceCounter(&finish);
+	std::cout << "Preprocessing : "
+		<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
+	QueryPerformanceCounter(&start);
+
 	strokeWidthTransform(edgeImage, gradientX, gradientY, params, SWTImage,
 			rays);
 
-	cvConvertScale(gradientX, gradientX, 255., 0);
-	cvConvertScale(gradientY, gradientY, 255., 0);
-	cvSaveImage("gradientX.png", gradientX);
-	cvSaveImage("gradientY.png", gradientY);
+	QueryPerformanceCounter(&finish);
+	std::cout << "SWT : "
+		<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
+	QueryPerformanceCounter(&start);
+
+	//cvConvertScale(gradientX, gradientX, 255., 0);
+	//cvConvertScale(gradientY, gradientY, 255., 0);
+	//cvSaveImage("gradientX.png", gradientX);
+	//cvSaveImage("gradientY.png", gradientY);
 
 
 	cvSaveImage("SWT_0.png", SWTImage);
@@ -400,8 +423,18 @@ void TextDetector::detect(IplImage * input,
 	// return type is a vector of vectors, where each outer vector is a component and
 	// the inner vector contains the (y,x) of each pixel in that component.
 	cvSaveImage("grayImg.png", grayImage);
+	QueryPerformanceCounter(&finish);
+	std::cout << "Code between STW and finding components : "
+		<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
+	QueryPerformanceCounter(&start);
+
 	std::vector<std::vector<Point2d> > components =
 		findLegallyConnectedComponents(SWTImage, rays, edgeSmoothedImage);
+
+	QueryPerformanceCounter(&finish);
+	std::cout << "Finding components : "
+		<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
+	QueryPerformanceCounter(&start);
 
 	IplImage * connectedComponentsImg = cvCreateImage(cvGetSize(input), 8U, 3);
 	//cvCopy(SWTImage, connectedComponentsImg, NULL);

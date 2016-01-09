@@ -15,6 +15,8 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
 using System.Configuration;
 using Newtonsoft.Json;
+using Website;
+using Microsoft.AspNet.SignalR;
 
 namespace BibNumberWeb.Controllers
 {
@@ -72,12 +74,6 @@ namespace BibNumberWeb.Controllers
                             ThumbnailUrl = photo.ThumbnailUrl
                         };
 
-                        
-
-                        photoModel.BibNumbers.Add("212");
-                        photoModel.BibNumbers.Add("411");
-                        photoModel.BibNumbers.Add("392");
-
                         photoAlbum.Photos.Add(photoModel);
                         
                     }
@@ -86,10 +82,12 @@ namespace BibNumberWeb.Controllers
                 db.PhotoAlbumSet.Add(photoAlbum);
                 await db.SaveChangesAsync();
 
-                foreach(var photo in photoAlbum.Photos)
-                {
-                    await DetectBibNumbers(photo);
-                }
+                await DetectBibNumbers(photoAlbum);
+
+                //foreach(var photo in photoAlbum.Photos)
+                //{
+                //    await DetectBibNumbers(photo);
+                //}
 
                 return RedirectToAction("Index");
             }
@@ -202,6 +200,23 @@ namespace BibNumberWeb.Controllers
             }            
         }
 
+        public async Task DetectBibNumbers(PhotoAlbum album)
+        {
+            try
+            {
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse("UseDevelopmentStorage=true");//ConfigurationManager.ConnectionStrings["AzureStorageConnection"].ConnectionString);
+                CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+                CloudQueue queue = queueClient.GetQueueReference("detectbibnumbersqueue");
+                queue.CreateIfNotExists();
+                var albumJson = await JsonConvert.SerializeObjectAsync(album);
+                queue.AddMessage(new CloudQueueMessage(albumJson));
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -209,6 +224,23 @@ namespace BibNumberWeb.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public async Task<ActionResult> ProgressNotification(int jobId, int progress)
+        {
+            var connections = JobProgressHub.GetUserConnections(jobId);
+
+            if (connections != null)
+            {
+                foreach (var connection in connections)
+                {
+                    // Notify the client to refresh the list of connections
+                    var hubContext = GlobalHost.ConnectionManager.GetHubContext<JobProgressHub>();
+                    hubContext.Clients.Clients(new[] { connection }).updateProgress(progress);
+                }
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
     }
 }

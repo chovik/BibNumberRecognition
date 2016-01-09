@@ -19,12 +19,11 @@ namespace BibNumbersDetectionWebJob
     // To learn more about Microsoft Azure WebJobs SDK, please see http://go.microsoft.com/fwlink/?LinkID=320976
     class Program
     {
-        private static BibNumbersMysqlContext db = new BibNumbersMysqlContext();
         // Please set the following connection strings in app.config for this WebJob to run:
         // AzureWebJobsDashboard and AzureWebJobsStorage
         static void Main()
         {
-#if DEBUG
+#if !DEBUG
             //DbConfiguration.SetConfiguration(new MySqlEFConfiguration());
             while(true)
             {
@@ -54,7 +53,7 @@ namespace BibNumbersDetectionWebJob
             
 
             //Log($"Retrieved message with content '{retrievedMessage.AsString}'");
-            Functions.ProcessQueueMessage(retrievedMessage.AsString);
+            Functions.ProcessAlbumMessage(retrievedMessage.AsString);
             queue.DeleteMessage(retrievedMessage);
             //Log("Deleted message");
         }

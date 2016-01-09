@@ -20,7 +20,7 @@ namespace BibNumberWeb
         public int PhotoAlbumId { get; set; }
         public string ThumbnailUrl { get; set; }
         //public string BibNumbersAsString { get; set; }
-    
+
         [JsonIgnore]
         public virtual PhotoAlbum PhotoAlbum { get; set; }
     }

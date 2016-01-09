@@ -121,7 +121,7 @@ TextRecognizer::TextRecognizer() {
 	 pars_vals.push_back("F");*/
 	tess.Init(NULL, "eng", tesseract::OEM_DEFAULT, NULL, 0, &pars_keys,
 			&pars_vals, false);
-#if 1
+#if 0
 	tess.SetVariable("tessedit_char_whitelist", "0123456789");
 #endif
 	tess.SetVariable("tessedit_write_images", "true");
@@ -145,21 +145,30 @@ int TextRecognizer::recognize(IplImage *input,
 		std::vector<std::string>& text) {
 
 	// Convert to grayscale
+	std::cout << "recognize 1 --- " << std::endl;
 	IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 	cvCvtColor(input, grayImage, CV_RGB2GRAY);
 
+	std::cout << "recognize 2 --- " << std::endl;
 	for (unsigned int i = 0; i < chainBB.size(); i++) {
+
+		std::cout << "recognize 2.1 --- " << std::endl;
 		cv::Point center = cv::Point(
 				(chainBB[i].first.x + chainBB[i].second.x) / 2,
 				(chainBB[i].first.y + chainBB[i].second.y) / 2);
 
+		std::cout << "recognize 2.2 --- " << std::endl;
+
 		/* work out if total width of chain is large enough */
 		if (chainBB[i].second.x - chainBB[i].first.x
-				< input->width / params.maxImgWidthToTextRatio) {
+				< input->width / params.maxImgWidthToTextRatio)
+		{
+			std::cout << "recognize 2.3 --- " << std::endl;
 			LOGL(LOG_TXT_ORIENT,
 					"Reject chain #" << i << " width=" << (chainBB[i].second.x - chainBB[i].first.x) << "<" << (input->width / params.maxImgWidthToTextRatio));
 			continue;
 		}
+		std::cout << "recognize 3 --- " << std::endl;
 
 		/* eliminate chains with components of lower height than required minimum */
 		int minHeight = chainBB[i].second.y - chainBB[i].first.y;
@@ -168,17 +177,24 @@ int TextRecognizer::recognize(IplImage *input,
 					compBB[chains[i].components[j]].second.y
 							- compBB[chains[i].components[j]].first.y);
 		}
+
+		std::cout << "recognize 4 --- " << std::endl;
+
 		if (minHeight < params.minCharacterheight) {
 			LOGL(LOG_CHAINS,
 					"Reject chain # " << i << " minHeight=" << minHeight << "<" << params.minCharacterheight);
 			continue;
 		}
 
+		std::cout << "recognize 5 --- " << std::endl;
+
 		/* invert direction if angle is in 3rd/4th quadrants */
 		if (chains[i].direction.x < 0) {
 			chains[i].direction.x = -chains[i].direction.x;
 			chains[i].direction.y = -chains[i].direction.y;
 		}
+
+		std::cout << "recognize 6 --- " << std::endl;
 		/* work out chain angle */
 		double theta_deg = 180
 				* atan2(chains[i].direction.y, chains[i].direction.x) / PI;

@@ -21,7 +21,7 @@ namespace BibNumberWeb.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("BibNumbersMysqlContext", throwIfV1Schema: false)
         {
         }
 

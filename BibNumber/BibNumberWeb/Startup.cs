@@ -11,6 +11,7 @@ namespace BibNumberWeb
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            app.MapSignalR();
             DbConfiguration.SetConfiguration(new MySqlEFConfiguration());
         }
     }

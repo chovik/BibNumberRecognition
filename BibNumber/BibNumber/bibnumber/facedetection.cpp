@@ -8,7 +8,7 @@
 
 namespace facedetection {
 std::string cascadeName =
-		"/home/greg/ws/opencv/data/haarcascades/haarcascade_frontalface_alt.xml";
+		"F:\\Projects\\BibNumberRecognition\\BibNumber\\BibNumber\\data\\haarcascades\\haarcascade_frontalface_alt2.xml";
 
 int processImage(cv::Mat& img, std::vector<cv::Rect>& faces) {
 	cv::CascadeClassifier cascade;

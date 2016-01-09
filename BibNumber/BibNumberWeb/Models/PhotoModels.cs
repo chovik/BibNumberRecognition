@@ -26,7 +26,7 @@ namespace BibNumberWeb
         //[Required]
         public string BibNumbersAsString
         {
-            get { return _bibNumbers.Aggregate((c, n) => c + "," + n); }
+            get { return _bibNumbers == null || _bibNumbers.Count == 0 ? "" : _bibNumbers.Aggregate((c, n) => c + "," + n); }
             set { _bibNumbers = value.Split(',').ToList(); }
         }
     }

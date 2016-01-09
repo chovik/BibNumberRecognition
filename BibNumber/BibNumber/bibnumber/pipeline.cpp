@@ -10,6 +10,9 @@
 
 #include "stdio.h"
 
+#undef min
+#undef max
+
 namespace pipeline {
 
 static void vectorAtoi(std::vector<int>&numbers, std::vector<std::string>&text)
@@ -25,7 +28,7 @@ int Pipeline::processImage(
 		cv::Mat& img,
 		std::string svmModel,
 		std::vector<int>& bibNumbers) {
-#if 0
+#if 1
 	int res;
 	const double scale = 1;
 	std::vector<cv::Rect> faces;
@@ -93,7 +96,12 @@ int Pipeline::processImage(
 					0,  /* bottomBorder: don't discard anything */
 					3, /* min chain length */
 			};
-			textDetector.detect(&ipl_img, params, text);
+			std::vector<Chain> chains;
+			std::vector<std::pair<Point2d, Point2d> > compBB;
+			std::vector<std::pair<CvPoint, CvPoint> > chainBB;
+
+			textDetector.detect(&ipl_img, params, chains, compBB, chainBB);
+			textRecognizer.recognize(&ipl_img, params, svmModel, chains, compBB, chainBB, text);
 			vectorAtoi(bibNumbers, text);
 			char filename[100];
 			sprintf(filename, "torso-%d.png", i);
