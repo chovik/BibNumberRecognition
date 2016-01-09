@@ -332,168 +332,179 @@ void TextDetector::detect(IplImage * input,
 		std::vector<std::pair<CvPoint, CvPoint> > &chainBB) {
 	assert(input->depth == IPL_DEPTH_8U);
 	assert(input->nChannels == 3);
+	std::cout << "TextDetector::detect(IplImage * input," << std::endl;
+	CvSize size = cvGetSize(input);
+	if (size.height > 0
+		&& size.width > 0)
+	{
+		LARGE_INTEGER start, finish, freq;
+		QueryPerformanceFrequency(&freq);
+		QueryPerformanceCounter(&start);
+		// Do something
 
-	LARGE_INTEGER start, finish, freq;
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&start);
-	// Do something
-	
-	// Convert to grayscale
-	IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
-	cvCvtColor(input, grayImage, CV_RGB2GRAY);
-	IplImage * edgeSmoothedImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
-	EdgePreservingSmoothing(grayImage, edgeSmoothedImage);
+		// Convert to grayscale
+		std::cout << "TextDetector::detect -- IplImage * grayImage = cvCreateImage" << std::endl;
 
-	cvSaveImage("edgeSmoothedImage.png", edgeSmoothedImage);
+		std::cout << "TextDetector::detect -- IplImage * grayImage = cvCreateImage h:" << size.height << "-  w:" << size.width << std::endl;
+		IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 
-	cv::Mat gray;
-	cv::Mat inputMat(input, true);
-	//cv::GaussianBlur(inputMat, inputMat, cv::Size(5, 5), 0);
-	cv::cvtColor(inputMat, gray, CV_RGB2GRAY);
-	// Create Canny Image
-	double threshold_low = 175;
-	double threshold_high = 320;
-	//IplImage * edgeImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
-	cv::Mat edge;
-	AutoCanny(&gray, &edge);
-	//cvCanny(grayImage, edgeImage, threshold_low, threshold_high, 3);
-	
+		std::cout << "TextDetector::detect -- IplImage * grayImage = cvCreateImage END" << std::endl;
+		cvCvtColor(input, grayImage, CV_RGB2GRAY);
+		IplImage * edgeSmoothedImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
+		EdgePreservingSmoothing(grayImage, edgeSmoothedImage);
 
-	IplImage* edgeImage = cvCloneImage(&(IplImage)edge);
+		cvSaveImage("edgeSmoothedImage.png", edgeSmoothedImage);
 
-	cvSaveImage("canny.png", edgeImage);
+		cv::Mat gray;
+		cv::Mat inputMat(input, true);
+		//cv::GaussianBlur(inputMat, inputMat, cv::Size(5, 5), 0);
+		cv::cvtColor(inputMat, gray, CV_RGB2GRAY);
+		// Create Canny Image
+		double threshold_low = 175;
+		double threshold_high = 320;
+		//IplImage * edgeImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
+		cv::Mat edge;
+		AutoCanny(&gray, &edge);
+		//cvCanny(grayImage, edgeImage, threshold_low, threshold_high, 3);
 
-	// Create gradient X, gradient Y
-	IplImage * gaussianImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F,
+
+		IplImage* edgeImage = cvCloneImage(&(IplImage)edge);
+
+		cvSaveImage("canny.png", edgeImage);
+
+		// Create gradient X, gradient Y
+		IplImage * gaussianImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F,
 			1);
-	cvConvertScale(edgeSmoothedImage, gaussianImage, 1. / 255., 0);
-	cvSmooth(gaussianImage, gaussianImage, CV_GAUSSIAN, 5, 5);
-	IplImage * gradientX = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
-	IplImage * gradientY = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
-	cvSobel(gaussianImage, gradientX, 1, 0, CV_SCHARR);
-	cvSobel(gaussianImage, gradientY, 0, 1, CV_SCHARR);
+		cvConvertScale(edgeSmoothedImage, gaussianImage, 1. / 255., 0);
+		cvSmooth(gaussianImage, gaussianImage, CV_GAUSSIAN, 5, 5);
+		IplImage * gradientX = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
+		IplImage * gradientY = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
+		cvSobel(gaussianImage, gradientX, 1, 0, CV_SCHARR);
+		cvSobel(gaussianImage, gradientY, 0, 1, CV_SCHARR);
 
-	cvSmooth(gradientX, gradientX, 3, 3);
-	cvSmooth(gradientY, gradientY, 3, 3);
-	cvReleaseImage(&gaussianImage);
+		cvSmooth(gradientX, gradientX, 3, 3);
+		cvSmooth(gradientY, gradientY, 3, 3);
+		cvReleaseImage(&gaussianImage);
 
-	// Calculate SWT and return ray vectors
-	std::vector<Ray> rays;
-	IplImage * SWTImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
-	for (int row = 0; row < input->height; row++) {
-		float* ptr = (float*) (SWTImage->imageData + row * SWTImage->widthStep);
-		for (int col = 0; col < input->width; col++) {
-			*ptr++ = -1;
+		// Calculate SWT and return ray vectors
+		std::vector<Ray> rays;
+		IplImage * SWTImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
+		for (int row = 0; row < input->height; row++) {
+			float* ptr = (float*)(SWTImage->imageData + row * SWTImage->widthStep);
+			for (int col = 0; col < input->width; col++) {
+				*ptr++ = -1;
+			}
 		}
-	}
 
-	QueryPerformanceCounter(&finish);
-	std::cout << "Preprocessing : "
-		<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
-	QueryPerformanceCounter(&start);
+		QueryPerformanceCounter(&finish);
+		std::cout << "Preprocessing : "
+			<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
+		QueryPerformanceCounter(&start);
 
-	strokeWidthTransform(edgeImage, gradientX, gradientY, params, SWTImage,
+		strokeWidthTransform(edgeImage, gradientX, gradientY, params, SWTImage,
 			rays);
 
-	QueryPerformanceCounter(&finish);
-	std::cout << "SWT : "
-		<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
-	QueryPerformanceCounter(&start);
+		QueryPerformanceCounter(&finish);
+		std::cout << "SWT : "
+			<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
+		QueryPerformanceCounter(&start);
 
-	//cvConvertScale(gradientX, gradientX, 255., 0);
-	//cvConvertScale(gradientY, gradientY, 255., 0);
-	//cvSaveImage("gradientX.png", gradientX);
-	//cvSaveImage("gradientY.png", gradientY);
+		//cvConvertScale(gradientX, gradientX, 255., 0);
+		//cvConvertScale(gradientY, gradientY, 255., 0);
+		//cvSaveImage("gradientX.png", gradientX);
+		//cvSaveImage("gradientY.png", gradientY);
 
 
-	cvSaveImage("SWT_0.png", SWTImage);
-	SWTMedianFilter(SWTImage, rays);
-	cvSaveImage("SWT_1.png", SWTImage);
+		cvSaveImage("SWT_0.png", SWTImage);
+		SWTMedianFilter(SWTImage, rays);
+		cvSaveImage("SWT_1.png", SWTImage);
 
-	IplImage * output2 = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
-	normalizeImage(SWTImage, output2);
-	cvSaveImage("SWT_2.png", output2);
-	IplImage * saveSWT = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
-	cvConvertScale(output2, saveSWT, 255, 0);
-	cvSaveImage("SWT.png", saveSWT);
-	cvReleaseImage(&output2);
-	cvReleaseImage(&saveSWT);
+		IplImage * output2 = cvCreateImage(cvGetSize(input), IPL_DEPTH_32F, 1);
+		normalizeImage(SWTImage, output2);
+		cvSaveImage("SWT_2.png", output2);
+		IplImage * saveSWT = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
+		cvConvertScale(output2, saveSWT, 255, 0);
+		cvSaveImage("SWT.png", saveSWT);
+		cvReleaseImage(&output2);
+		cvReleaseImage(&saveSWT);
 
-	// Calculate legally connected components from SWT and gradient image.
-	// return type is a vector of vectors, where each outer vector is a component and
-	// the inner vector contains the (y,x) of each pixel in that component.
-	cvSaveImage("grayImg.png", grayImage);
-	QueryPerformanceCounter(&finish);
-	std::cout << "Code between STW and finding components : "
-		<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
-	QueryPerformanceCounter(&start);
+		// Calculate legally connected components from SWT and gradient image.
+		// return type is a vector of vectors, where each outer vector is a component and
+		// the inner vector contains the (y,x) of each pixel in that component.
+		cvSaveImage("grayImg.png", grayImage);
+		QueryPerformanceCounter(&finish);
+		std::cout << "Code between STW and finding components : "
+			<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
+		QueryPerformanceCounter(&start);
 
-	std::vector<std::vector<Point2d> > components =
-		findLegallyConnectedComponents(SWTImage, rays, edgeSmoothedImage);
+		std::vector<std::vector<Point2d> > components =
+			findLegallyConnectedComponents(SWTImage, rays, edgeSmoothedImage);
 
-	QueryPerformanceCounter(&finish);
-	std::cout << "Finding components : "
-		<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
-	QueryPerformanceCounter(&start);
+		QueryPerformanceCounter(&finish);
+		std::cout << "Finding components : "
+			<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
+		QueryPerformanceCounter(&start);
 
-	IplImage * connectedComponentsImg = cvCreateImage(cvGetSize(input), 8U, 3);
-	//cvCopy(SWTImage, connectedComponentsImg, NULL);
-	for (std::vector<std::vector<Point2d> >::iterator it = components.begin();
-		it != components.end(); it++)
-	{
-		float mean, variance, median;
-		float meanColor, varianceColor, medianColor;
-		int minx, miny, maxx, maxy;
-		componentStats(SWTImage, (*it), mean, variance, median, minx, miny,
-			maxx, maxy,
-			meanColor, varianceColor, medianColor, edgeSmoothedImage);
+		IplImage * connectedComponentsImg = cvCreateImage(cvGetSize(input), 8U, 3);
+		//cvCopy(SWTImage, connectedComponentsImg, NULL);
+		for (std::vector<std::vector<Point2d> >::iterator it = components.begin();
+			it != components.end(); it++)
+		{
+			float mean, variance, median;
+			float meanColor, varianceColor, medianColor;
+			int minx, miny, maxx, maxy;
+			componentStats(SWTImage, (*it), mean, variance, median, minx, miny,
+				maxx, maxy,
+				meanColor, varianceColor, medianColor, edgeSmoothedImage);
 
-		Point2d bb1;
-		bb1.x = minx;
-		bb1.y = miny;
+			Point2d bb1;
+			bb1.x = minx;
+			bb1.y = miny;
 
-		Point2d bb2;
-		bb2.x = maxx;
-		bb2.y = maxy;
-		std::pair<Point2d, Point2d> pair(bb1, bb2);
+			Point2d bb2;
+			bb2.x = maxx;
+			bb2.y = maxy;
+			std::pair<Point2d, Point2d> pair(bb1, bb2);
 
-		compBB.push_back(pair);
-	}
+			compBB.push_back(pair);
+		}
 
-	renderComponentsWithBoxes(SWTImage, components, compBB, connectedComponentsImg);
-	cvSaveImage("component-all.png", connectedComponentsImg);
-	cvReleaseImage(&connectedComponentsImg);
-	compBB.clear();
+		renderComponentsWithBoxes(SWTImage, components, compBB, connectedComponentsImg);
+		cvSaveImage("component-all.png", connectedComponentsImg);
+		cvReleaseImage(&connectedComponentsImg);
+		compBB.clear();
 
-	// Filter the components
-	std::vector<std::vector<Point2d> > validComponents;
-	std::vector<Point2dFloat> compCenters;
-	std::vector<float> compMedians;
-	std::vector<Point2d> compDimensions;
-	filterComponents(SWTImage, components, validComponents, compCenters,
-		compMedians, compDimensions, compBB, params, edgeSmoothedImage);
+		// Filter the components
+		std::vector<std::vector<Point2d> > validComponents;
+		std::vector<Point2dFloat> compCenters;
+		std::vector<float> compMedians;
+		std::vector<Point2d> compDimensions;
+		filterComponents(SWTImage, components, validComponents, compCenters,
+			compMedians, compDimensions, compBB, params, edgeSmoothedImage);
 
-	IplImage * output3 = cvCreateImage(cvGetSize(input), 8U, 3);
-	renderComponentsWithBoxes(SWTImage, validComponents, compBB, output3);
-	cvSaveImage("components.png", output3);
-	cvReleaseImage ( &output3 );
+		IplImage * output3 = cvCreateImage(cvGetSize(input), 8U, 3);
+		renderComponentsWithBoxes(SWTImage, validComponents, compBB, output3);
+		cvSaveImage("components.png", output3);
+		cvReleaseImage(&output3);
 
-	// Make chains of components
-	chains = makeChains(input, validComponents, compCenters, compMedians,
+		// Make chains of components
+		chains = makeChains(input, validComponents, compCenters, compMedians,
 			compDimensions, params);
 
-	IplImage * output = cvCreateImage(cvGetSize(grayImage), IPL_DEPTH_8U, 3);
-	renderChainsWithBoxes(SWTImage, validComponents, chains, compBB, chainBB, output);
-	cvSaveImage("text-boxes.png", output);
+		IplImage * output = cvCreateImage(cvGetSize(grayImage), IPL_DEPTH_8U, 3);
+		renderChainsWithBoxes(SWTImage, validComponents, chains, compBB, chainBB, output);
+		cvSaveImage("text-boxes.png", output);
 
 
 
-	cvReleaseImage(&output);
-	cvReleaseImage(&gradientX);
-	cvReleaseImage(&gradientY);
-	cvReleaseImage(&SWTImage);
-	cvReleaseImage(&edgeImage);
-	cvReleaseImage(&grayImage);
+		cvReleaseImage(&output);
+		cvReleaseImage(&gradientX);
+		cvReleaseImage(&gradientY);
+		cvReleaseImage(&SWTImage);
+		cvReleaseImage(&edgeImage);
+		cvReleaseImage(&grayImage);
+	}
+	
 	return;
 }
 

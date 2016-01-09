@@ -527,6 +527,7 @@ int TextRecognizer::recognize(IplImage *input,
 	}
 
 	cvReleaseImage(&grayImage);
+	std::cout << "recognize END--- " << std::endl;
 
 	return 0;
 

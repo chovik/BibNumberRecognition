@@ -28,6 +28,8 @@ int Pipeline::processImage(
 		cv::Mat& img,
 		std::string svmModel,
 		std::vector<int>& bibNumbers) {
+
+	std::cout << "Pipeline::processImage " << std::endl;
 #if 1
 	int res;
 	const double scale = 1;
@@ -51,7 +53,7 @@ int Pipeline::processImage(
 		cv::Point center;
 		cv::Scalar color = colors[i % 8];
 		int radius;
-
+		std::cout << "Pipeline::processImage -- " << i << std::endl;
 		double aspect_ratio = (double) r->width / r->height;
 		if (0.75 < aspect_ratio && aspect_ratio < 1.3) {
 			center.x = cvRound((r->x + r->width * 0.5) * scale);
@@ -80,8 +82,9 @@ int Pipeline::processImage(
 		roi.height = std::min(roi.height, img.rows - roi.y);
 
 		//rectangle( img, roi, color, 3, 8, 0);
-
+		std::cout << "Pipeline::processImage - cv::Mat subImage(img, roi);" << std::endl;
 		cv::Mat subImage(img, roi);
+		std::cout << "Pipeline::processImage - cv::Mat subImage(img, roi); END" << std::endl;
 		IplImage ipl_img = subImage;
 		if ( //(i==10) &&
 				(1)) {
@@ -99,13 +102,17 @@ int Pipeline::processImage(
 			std::vector<Chain> chains;
 			std::vector<std::pair<Point2d, Point2d> > compBB;
 			std::vector<std::pair<CvPoint, CvPoint> > chainBB;
-
+			std::cout << "Pipeline::processImage - textDetector.detect" << std::endl;
 			textDetector.detect(&ipl_img, params, chains, compBB, chainBB);
 			textRecognizer.recognize(&ipl_img, params, svmModel, chains, compBB, chainBB, text);
 			vectorAtoi(bibNumbers, text);
 			char filename[100];
+			
 			sprintf(filename, "torso-%d.png", i);
+
+			std::cout << "Pipeline::processImage - saving torso " << filename << " - " << faces.size() << std::endl;
 			cv::imwrite(filename, subImage);
+			std::cout << "Pipeline::processImage - saving torso END" << std::endl;
 		}
 	}
 #else
@@ -143,6 +150,7 @@ int Pipeline::processImage(
 	vectorAtoi(bibNumbers, text);
 #endif
 	cv::imwrite("face-detection.png", img);
+	std::cout << "Pipeline::processImage -  END" << std::endl;
 
 	return 0;
 

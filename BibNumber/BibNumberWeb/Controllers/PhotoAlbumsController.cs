@@ -89,7 +89,7 @@ namespace BibNumberWeb.Controllers
                 //    await DetectBibNumbers(photo);
                 //}
 
-                return RedirectToAction("Index");
+                return Redirect("~/PhotoAlbums/Details/" + photoAlbum.Id);
             }
 
             return View(photoAlbum);
