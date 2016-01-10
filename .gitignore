@@ -194,3 +194,7 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+/BibNumber/BibNumberWeb/Web.Release.config
+/BibNumber/BibNumberWeb/Web.config
+/BibNumber/BibNumberWeb/Web.Debug.config
+/BibNumber/BibNumbersDetectionWebJob/App.config
