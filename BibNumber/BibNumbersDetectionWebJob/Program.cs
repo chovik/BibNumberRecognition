@@ -23,7 +23,7 @@ namespace BibNumbersDetectionWebJob
         // AzureWebJobsDashboard and AzureWebJobsStorage
         static void Main()
         {
-#if !DEBUG
+#if DEBUG
             //DbConfiguration.SetConfiguration(new MySqlEFConfiguration());
             while(true)
             {
@@ -39,7 +39,7 @@ namespace BibNumbersDetectionWebJob
         private static void GetJobsFromQueue()
         {
             //Log("Getting Load jobs from queue...");
-            var storageAccount = CloudStorageAccount.Parse("UseDevelopmentStorage=true");
+            var storageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=bibnumbers;AccountKey=eDY4HyEU9TEB01sdrV3/1UjuZXpYwGR4BTNeiAwGvtiawFM2z+eW0PSw2JVUKIkDksCFVxPiGqp4RBAZquNAww==");
             var queueClient = storageAccount.CreateCloudQueueClient();
             var queue = queueClient.GetQueueReference("detectbibnumbersqueue");
             var retrievedMessage = queue.GetMessage();

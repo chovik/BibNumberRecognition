@@ -187,7 +187,7 @@ namespace BibNumberWeb.Controllers
         {
             try
             {
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse("UseDevelopmentStorage=true");//ConfigurationManager.ConnectionStrings["AzureStorageConnection"].ConnectionString);
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["AzureWebJobsStorage"].ConnectionString);//CloudStorageAccount.Parse("UseDevelopmentStorage=true");
                 CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
                 CloudQueue queue = queueClient.GetQueueReference("detectbibnumbersqueue");
                 queue.CreateIfNotExists();
@@ -204,7 +204,8 @@ namespace BibNumberWeb.Controllers
         {
             try
             {
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse("UseDevelopmentStorage=true");//ConfigurationManager.ConnectionStrings["AzureStorageConnection"].ConnectionString);
+                var connectionString = ConfigurationManager.ConnectionStrings["AzureWebJobsStorage"].ConnectionString;
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);//CloudStorageAccount.Parse("UseDevelopmentStorage=true");tionManager.ConnectionStrings["AzureStorageConnection"].ConnectionString);//CloudStorageAccount.Parse("UseDevelopmentStorage=true");
                 CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
                 CloudQueue queue = queueClient.GetQueueReference("detectbibnumbersqueue");
                 queue.CreateIfNotExists();
