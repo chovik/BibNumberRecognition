@@ -10,6 +10,12 @@ namespace facedetection {
 std::string cascadeName =
 		"F:\\Projects\\BibNumberRecognition\\BibNumber\\BibNumber\\data\\haarcascades\\haarcascade_frontalface_alt2.xml";
 
+/// <summary>
+/// Processes the image to detect faces.
+/// </summary>
+/// <param name="img">input image</param>
+/// <param name="faces">will be filled with detected faces</param>
+/// <returns>0 if no error occured</returns>
 int processImage(cv::Mat& img, std::vector<cv::Rect>& faces) {
 	cv::CascadeClassifier cascade;
 
@@ -28,8 +34,10 @@ int processImage(cv::Mat& img, std::vector<cv::Rect>& faces) {
 	cv::resize(gray, smallImg, smallImg.size(), 0, 0, cv::INTER_LINEAR);
 	cv::equalizeHist(smallImg, smallImg);
 
+	cv::imwrite("smallImg.jpg", smallImg);
+
 	t = (double) cvGetTickCount();
-	cascade.detectMultiScale(smallImg, faces, 1.1, 2, 0
+	cascade.detectMultiScale(gray, faces, 1.03, 10, 0
 	//|CV_HAAR_FIND_BIGGEST_OBJECT
 	//|CV_HAAR_DO_ROUGH_SEARCH
 			| CV_HAAR_SCALE_IMAGE, cv::Size(30, 30));

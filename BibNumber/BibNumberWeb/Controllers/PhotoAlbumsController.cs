@@ -20,17 +20,33 @@ using Microsoft.AspNet.SignalR;
 
 namespace BibNumberWeb.Controllers
 {
+    /// <summary>
+    /// Provides methods that respond to HTTP requests that are made to the site with url prefix '/PhotoAlbums/'.
+    /// </summary>
     public class PhotoAlbumsController : Controller
     {
         private BibNumbersMysqlContext db = new BibNumbersMysqlContext();
 
-        // GET: PhotoAlbums
+        /// <summary>
+        /// GET: PhotoAlbums
+        /// Load list of albums from a database and navigates to the site where the list is displayed.
+        /// </summary>
+        /// <returns></returns>
         public async Task<ActionResult> Index()
         {
             return View(await db.PhotoAlbumSet.ToListAsync());
         }
 
-        // GET: PhotoAlbums/Details/5
+        /// <summary>
+        /// GET: PhotoAlbums/Details/5
+        /// Loads an album with an specific id and navigates to the site displaying details of the requested album.
+        /// </summary>
+        /// <param name="id">id of an album to load</param>
+        /// <returns>
+        /// Bad Request result, if the passed id is null.
+        /// Not Found object, if the requested album was not found.
+        /// View that is used to render details page, if the requested album was found.
+        /// </returns>
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
@@ -45,15 +61,28 @@ namespace BibNumberWeb.Controllers
             return View(photoAlbum);
         }
 
-        // GET: PhotoAlbums/Create
+        /// <summary>
+        /// GET: PhotoAlbums/Create
+        /// Creates a view that is used to create new album.
+        /// </summary>
+        /// <returns>View that is used to create new album.</returns>
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: PhotoAlbums/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// POST: PhotoAlbums/Create
+        /// Handles POST request to create new album. Binds Url and Name from the POST data to the photoAlbum parameter.
+        /// Checks if the form data are valid and loads photos from the filled url. 
+        /// Method is now working only with urls that links to the albums from the rajce.net site.
+        /// If the form data are valid, photos from the rajce.net are loaded and new album is created and stored to the database.
+        /// After the album is stored to the database, method informs Azure WebJob service to run detection algorithm on the loaded photos.
+        /// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        /// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// </summary>
+        /// <param name="photoAlbum">album that contains Url and Name passed as POST data</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Url,Name")] PhotoAlbum photoAlbum)
@@ -95,7 +124,11 @@ namespace BibNumberWeb.Controllers
             return View(photoAlbum);
         }
 
-        // GET: PhotoAlbums/Edit/5
+        /// <summary>
+        /// GET: PhotoAlbums/Edit/5
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)

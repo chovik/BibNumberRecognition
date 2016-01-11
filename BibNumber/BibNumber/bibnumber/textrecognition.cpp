@@ -16,6 +16,123 @@
 
 #define PI 3.14159265
 
+/// <summary>
+/// Fixes wrongly recognized numbers. If the recognized character is similiar to a digit, character is replaced by the digit.
+/// </summary>
+/// <param name="s">string to fix. string where characters will be replaced if they are similiar to a digit.</param>
+/// <returns>srings where characters similiar to the digit are fixed and changed to the digit. 
+/// A is replaced by 4, B by 8, g by 9, I, l by 1 and T by7</returns>
+static std::string result_correction(const std::string& s) {
+	std::string result = "";
+	std::locale loc;
+	std::string::const_iterator it = s.begin();
+	bool numberVisited = false;
+	bool processingEnd = false;
+	while (it != s.end())
+	{
+		if (!std::isdigit(*it, loc))
+		{
+			if (*it == 'A')
+			{
+				numberVisited = true;
+				result += '4';
+			}
+			else if (*it == 'B')
+			{
+				numberVisited = true;
+				result += '8';
+			}
+			else if (*it == 'g')
+			{
+				numberVisited = true;
+				result += '9';
+			}
+			else if (*it == 'I')
+			{
+				numberVisited = true;
+				result += '1';
+			}
+			else if (*it == 'l')
+			{
+				numberVisited = true;
+				result += '1';
+			}
+			else if (*it == 'T')
+			{
+				numberVisited = true;
+				result += '7';
+			}
+			else
+			{
+				result += *it;
+			}
+		}
+		else
+		{
+			result += *it;
+		}
+
+		++it;
+	}
+
+	return result;
+}
+
+/// <summary>
+/// Removes characters, which are not digits and are in the prefix or postfix.
+/// CD123HG is changed to 123. 
+/// This method is used when in the created chain are not only digits but there is some object at the beginning or at the end of chain.
+/// </summary>
+/// <param name="s">string to process</param>
+/// <returns>string with removed non-digit characters.  </returns>
+static std::string trim_number(const std::string& s) {
+	std::string result = "";
+	std::locale loc;
+	std::string::const_iterator it = s.begin();
+	bool numberVisited = false;
+	bool processingEnd = false;
+	while (it != s.end())
+	{
+		if (!std::isdigit(*it, loc))
+		{
+			if (*it == 'A')
+			{
+				numberVisited = true;
+				result += '4';
+			}
+			else if(*it == 'B')
+			{
+				numberVisited = true;
+				result += '8';
+			}
+			else
+			if (numberVisited)
+			{
+				processingEnd = true;
+			}
+		}
+		else
+		{
+			if (processingEnd)
+			{
+				result = s;
+				break;
+			}
+			numberVisited = true;
+			result += *it;
+		}
+
+		++it;
+	}
+		
+	return result;
+}
+
+/// <summary>
+/// Checks if the string is number or not.
+/// </summary>
+/// <param name="s">string to be checked</param>
+/// <returns>true if string is valid number. false otherwise</returns>
 static bool is_number(const std::string& s) {
 	std::locale loc;
 	std::string::const_iterator it = s.begin();
@@ -24,14 +141,30 @@ static bool is_number(const std::string& s) {
 	return !s.empty() && it == s.end();
 }
 
+/// <summary>
+/// Gets absolute value.
+/// </summary>
+/// <param name="x">input value</param>
+/// <returns>absolute value</returns>
 static double absd(double x) {
 	return x > 0 ? x : -x;
 }
 
+/// <summary>
+/// Gets square value.
+/// </summary>
+/// <param name="x">input number</param>
+/// <returns>x^2</returns>
 static inline double square(double x) {
 	return x * x;
 }
 
+/// <summary>
+/// Gets the bounding box.
+/// </summary>
+/// <param name="vec">points</param>
+/// <param name="clip">The clip.</param>
+/// <returns></returns>
 static cv::Rect getBoundingBox(std::vector<cv::Point> vec, cv::Size clip) {
 	int minx = clip.width - 1, miny = clip.height - 1, maxx = 0, maxy = 0;
 	for (std::vector<cv::Point>::iterator it = vec.begin(); it != vec.end();
@@ -137,6 +270,226 @@ TextRecognizer::~TextRecognizer(void) {
 	tess.End();
 }
 
+/// <summary>
+/// Checks the height of the chain. 
+/// </summary>
+/// <param name="chainIndex">Index of the chain.</param>
+/// <param name="params">The parameters that are used to verify height of chain.</param>
+/// <param name="chains">Found chains that consist of connected components. Connected components are character candidates.</param>
+/// <param name="compBB">Areas of connected components. Every item in compBB represents area of one connected component.</param>
+/// <param name="chainBB">Areas of chains. Every item in chainBB represents area of one chain.  Area of a chain is computed by union of all areas of connected components that are part of the chain</param>
+/// <returns>If chain contains component of lower height than required minimum returns false. Otherwise returns true.</returns>
+bool CheckChainHeight(int chainIndex, const struct TextDetectionParams &params,
+	std::vector<Chain> &chains,
+	std::vector<std::pair<Point2d, Point2d> > &compBB,
+	std::vector<std::pair<CvPoint, CvPoint> > &chainBB)
+{
+	int minHeight = chainBB[chainIndex].second.y - chainBB[chainIndex].first.y;
+	//iterated through all components in the chain to find the component with lowest height 
+	for (unsigned j = 0; j < chains[chainIndex].components.size(); j++) {
+		minHeight = std::min(minHeight,
+			compBB[chains[chainIndex].components[j]].second.y
+			- compBB[chains[chainIndex].components[j]].first.y);
+	}
+
+	if (minHeight < params.minCharacterheight) {
+		LOGL(LOG_CHAINS,
+			"Reject chain # " << chainIndex << " minHeight=" << minHeight << "<" << params.minCharacterheight);
+		return false;
+	}
+
+	return true;
+}
+
+/// <summary>
+/// Gets the and binarize only selected components.
+/// </summary>
+/// <param name="componentsImg">image where the selected components will be rendered</param>
+/// <param name="grayMat">The gray mat.</param>
+/// <param name="compCoords">vector will be filled with coordinates of selected componets.</param>
+/// <param name="chainIndex">Index of the chain.</param>
+/// <param name="params">The parameters that are used to verify height of chain.</param>
+/// <param name="chains">Found chains that consist of connected components. Connected components are character candidates.</param>
+/// <param name="compBB">Areas of connected components. Every item in compBB represents area of one connected component.</param>
+/// <param name="chainBB">Areas of chains. Every item in chainBB represents area of one chain.  Area of a chain is computed by union of all areas of connected components that are part of the chain</param>
+void GetAndBinarizeOnlySelectedComponents(cv::Mat& componentsImg, cv::Mat& grayMat, std::vector<cv::Point>& compCoords, int chainIndex, const struct TextDetectionParams &params,
+	std::vector<Chain> &chains,
+	std::vector<std::pair<Point2d, Point2d> > &compBB,
+	std::vector<std::pair<CvPoint, CvPoint> > &chainBB)
+{
+	int i = chainIndex;
+	for (unsigned int j = 0; j < chains[i].components.size(); j++)
+	{
+		int component_id = chains[i].components[j];
+		cv::Rect roi = cv::Rect(compBB[component_id].first.x,
+			compBB[component_id].first.y,
+			compBB[component_id].second.x
+			- compBB[component_id].first.x,
+			compBB[component_id].second.y
+			- compBB[component_id].first.y);
+		cv::Mat componentRoi = grayMat(roi);
+
+		compCoords.push_back(
+			cv::Point(compBB[component_id].first.x,
+			compBB[component_id].first.y));
+		compCoords.push_back(
+			cv::Point(compBB[component_id].second.x,
+			compBB[component_id].second.y));
+		compCoords.push_back(
+			cv::Point(compBB[component_id].first.x,
+			compBB[component_id].second.y));
+		compCoords.push_back(
+			cv::Point(compBB[component_id].second.x,
+			compBB[component_id].first.y));
+
+		cv::Mat thresholded;
+		cv::threshold(componentRoi, thresholded, 0 // the value doesn't matter for Otsu thresholding
+			, 255 // we could choose any non-zero value. 255 (white) makes it easy to see the binary image
+			, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
+
+		IplImage * thresholdedImage = cvCreateImage(cvSize(thresholded.cols, thresholded.rows), IPL_DEPTH_32F, 1);
+
+		IplImage* thresh = cvCloneImage(&(IplImage)thresholded);
+
+		for (int row = 0; row < thresholded.rows; row++)
+		{
+			for (int col = 0; col < thresholded.cols; col++)
+			{
+				CV_IMAGE_ELEM(thresholdedImage, float, row, col) = thresholded.at<byte>(row, col);
+			}
+		}
+		std::vector<Ray> rays;
+		std::vector<std::vector<Point2d> > components = findLegallyConnectedComponents(thresholdedImage, rays, thresh);
+
+		int maxInnerComponentArea = 0;
+		int maxInnerComponentIndex = -1;
+		int currentInnerComponentIndex = -1;
+		for (std::vector<std::vector<Point2d> >::iterator it = components.begin();
+			it != components.end(); it++)
+		{
+			currentInnerComponentIndex++;
+			float mean, variance, median;
+			int minx, miny, maxx, maxy;
+			float meanColor, varianceColor, medianColor;
+			componentStats(thresholdedImage, (*it), mean, variance, median, minx, miny,
+				maxx, maxy,
+				meanColor, varianceColor, medianColor, thresh);
+
+			Point2d bb1;
+			bb1.x = minx;
+			bb1.y = miny;
+
+			Point2d bb2;
+			bb2.x = maxx;
+			bb2.y = maxy;
+			std::pair<Point2d, Point2d> pair(bb1, bb2);
+
+			int width = maxx - minx + 1;
+			int height = maxy - miny + 1;
+
+			int area = width * height;
+
+			if (area > maxInnerComponentArea)
+			{
+				maxInnerComponentArea = area;
+				maxInnerComponentIndex = currentInnerComponentIndex;
+			}
+		}
+
+		IplImage * thresholdedMaxComp = cvCreateImage(cvSize(componentRoi.cols, componentRoi.rows), IPL_DEPTH_8U, 1);
+		cvSet(thresholdedMaxComp, cvScalar(0));
+
+		if (maxInnerComponentIndex >= 0)
+		{
+			std::vector<Point2d> maxComp = components[maxInnerComponentIndex];
+			for (std::vector<Point2d>::iterator pit = maxComp.begin(); pit != maxComp.end(); pit++)
+			{
+				CV_IMAGE_ELEM(thresholdedMaxComp, byte, pit->y, pit->x) = 255;
+			}
+		}
+
+
+#if 0
+		cv::Moments mu = cv::moments(thresholded, true);
+		std::cout << "mu02=" << mu.mu02 << " mu11=" << mu.mu11 << " skew="
+			<< mu.mu11 / mu.mu02 << std::endl;
+#endif
+
+		if (roi.width != 0
+			&& roi.height != 0
+			&& thresholdedMaxComp->width != 0
+			&& thresholdedMaxComp->height != 0)
+		{
+			cv::Mat thresholdMat(thresholdedMaxComp);
+			thresholdMat.copyTo(componentsImg(roi));
+		}
+		
+	}
+}
+
+void CheckRecognizedString(char* out,
+	int chainIndex,
+	const struct TextDetectionParams &params,
+	std::vector<Chain> &chains,
+	std::vector<std::pair<Point2d, Point2d> > &compBB,
+	std::vector<std::pair<CvPoint, CvPoint> > &chainBB,
+	std::vector<std::string>& text)
+{
+	int i = chainIndex;
+	if (strlen(out) == 0) {
+		return;
+	}
+	std::string s_out(out);
+	boost::algorithm::trim(s_out);
+
+	if (s_out.size() != chains[i].components.size()) {
+		LOGL(LOG_TEXTREC,
+			"Text size mismatch: expected " << chains[i].components.size() << " digits, got '" << s_out << "' (" << s_out.size() << " digits)");
+		return;
+	}
+	/* if first character is a '0' we have a partially occluded number */
+	if (s_out[0] == '0')
+	{
+		LOGL(LOG_TEXTREC, "Text begins with '0' (partially occluded)");
+		return;
+	}
+
+	if (!is_number(s_out))
+	{
+		std::string correctedOut = result_correction(s_out);
+		std::string newOut = trim_number(correctedOut);
+		if (!is_number(newOut))
+		{
+			LOGL(LOG_TEXTREC, "Text is not a number ('" << s_out << "')");
+			return;
+		}
+		else
+		{
+			s_out = newOut;
+		}
+	}
+
+	/* all fine, add this bib number */
+bibnumber_succ:
+	text.push_back(s_out);
+	LOGL(LOG_TEXTREC, "Bib number: '" << s_out << "'");
+}
+
+
+/// <summary>
+/// This is the main method used to recognize numbers on the input image.
+/// </summary>
+/// <param name="input">the input image used to recognize numbers</param>
+/// <param name="params">The parameters that are used to verify if the found result is valid or not.
+/// Main reason to use this parameters is to avoid false detected numbers.</param>
+/// <param name="svmModel">The SVM model.</param>
+/// <param name="chains">Found chains that consist of connected components. Connected components are character candidates.</param>
+/// <param name="compBB">Areas of connected components. Every item in compBB represents area of one connected component.</param>
+/// <param name="chainBB">Areas of chains. Every item in chainBB represents area of one chain.  Area of a chain is computed by union of all areas of connected components that are part of the chain</param>
+/// <param name="text">collection which will be filled by found numbers</param>
+/// <returns>
+/// 0 if no error occured
+/// </returns>
 int TextRecognizer::recognize(IplImage *input,
 		const struct TextDetectionParams &params, std::string svmModel,
 		std::vector<Chain> &chains,
@@ -144,52 +497,32 @@ int TextRecognizer::recognize(IplImage *input,
 		std::vector<std::pair<CvPoint, CvPoint> > &chainBB,
 		std::vector<std::string>& text) {
 	CvSize size = cvGetSize(input);
+	
+	//checks if image is not empty
 	if (size.height > 0
 		&& size.width > 0)
-	{
-		// Convert to grayscale
-		std::cout << "recognize 1 --- " << std::endl;
+	{		
+		//converts image to grayscale
 		IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 		cvCvtColor(input, grayImage, CV_RGB2GRAY);
 
-		std::cout << "recognize 2 --- " << std::endl;
-		for (unsigned int i = 0; i < chainBB.size(); i++) {
-
-			std::cout << "recognize 2.1 --- " << std::endl;
+		for (unsigned int i = 0; i < chainBB.size(); i++)
+		{
 			cv::Point center = cv::Point(
 				(chainBB[i].first.x + chainBB[i].second.x) / 2,
 				(chainBB[i].first.y + chainBB[i].second.y) / 2);
 
-			std::cout << "recognize 2.2 --- " << std::endl;
-
-			/* work out if total width of chain is large enough */
+			//checks if the width of the chain is not too big
 			if (chainBB[i].second.x - chainBB[i].first.x
 				< input->width / params.maxImgWidthToTextRatio)
 			{
-				std::cout << "recognize 2.3 --- " << std::endl;
 				LOGL(LOG_TXT_ORIENT,
 					"Reject chain #" << i << " width=" << (chainBB[i].second.x - chainBB[i].first.x) << "<" << (input->width / params.maxImgWidthToTextRatio));
 				continue;
 			}
-			std::cout << "recognize 3 --- " << std::endl;
 
-			/* eliminate chains with components of lower height than required minimum */
-			int minHeight = chainBB[i].second.y - chainBB[i].first.y;
-			for (unsigned j = 0; j < chains[i].components.size(); j++) {
-				minHeight = std::min(minHeight,
-					compBB[chains[i].components[j]].second.y
-					- compBB[chains[i].components[j]].first.y);
-			}
-
-			std::cout << "recognize 4 --- " << std::endl;
-
-			if (minHeight < params.minCharacterheight) {
-				LOGL(LOG_CHAINS,
-					"Reject chain # " << i << " minHeight=" << minHeight << "<" << params.minCharacterheight);
-				continue;
-			}
-
-			std::cout << "recognize 5 --- " << std::endl;
+			/* eliminates chains with components of lower height than required minimum */
+			CheckChainHeight(i, params, chains, compBB, chainBB);
 
 			/* invert direction if angle is in 3rd/4th quadrants */
 			if (chains[i].direction.x < 0) {
@@ -197,7 +530,6 @@ int TextRecognizer::recognize(IplImage *input,
 				chains[i].direction.y = -chains[i].direction.y;
 			}
 
-			std::cout << "recognize 6 --- " << std::endl;
 			/* work out chain angle */
 			double theta_deg = 180
 				* atan2(chains[i].direction.y, chains[i].direction.x) / PI;
@@ -207,129 +539,20 @@ int TextRecognizer::recognize(IplImage *input,
 					"Chain angle " << theta_deg << " exceeds max " << params.maxAngle);
 				continue;
 			}
-			if ((chainBB.size() == 2) && (absd(theta_deg) > 5))
-				continue;
+
 			LOGL(LOG_TXT_ORIENT,
 				"Chain #" << i << " Angle: " << theta_deg << " degrees");
 
-			/* create copy of input image including only the selected components */
+			/* create copy of input image including only the selected components
+			first image is thresholded with Otsu and then the largest connected components is found. 
+			This connected components will be passed to Tesseract OCR library to recognize numbers.
+			*/
 			cv::Mat inputMat = cv::Mat(input);
 			cv::Mat grayMat = cv::Mat(grayImage);
-			//cv::GaussianBlur(grayMat, grayMat, cv::Size(3, 3), 0);
-			cvSaveImage("grayImage-bib.bmp", grayImage);
 			cv::Mat componentsImg = cv::Mat::zeros(grayMat.rows, grayMat.cols,
 				grayMat.type());
-
 			std::vector<cv::Point> compCoords;
-
-			for (unsigned int j = 0; j < chains[i].components.size(); j++) {
-				int component_id = chains[i].components[j];
-				cv::Rect roi = cv::Rect(compBB[component_id].first.x,
-					compBB[component_id].first.y,
-					compBB[component_id].second.x
-					- compBB[component_id].first.x,
-					compBB[component_id].second.y
-					- compBB[component_id].first.y);
-				cv::Mat componentRoi = grayMat(roi);
-
-				compCoords.push_back(
-					cv::Point(compBB[component_id].first.x,
-					compBB[component_id].first.y));
-				compCoords.push_back(
-					cv::Point(compBB[component_id].second.x,
-					compBB[component_id].second.y));
-				compCoords.push_back(
-					cv::Point(compBB[component_id].first.x,
-					compBB[component_id].second.y));
-				compCoords.push_back(
-					cv::Point(compBB[component_id].second.x,
-					compBB[component_id].first.y));
-
-				cv::Mat thresholded;
-				cv::threshold(componentRoi, thresholded, 0 // the value doesn't matter for Otsu thresholding
-					, 255 // we could choose any non-zero value. 255 (white) makes it easy to see the binary image
-					, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
-
-				IplImage * thresholdedImage = cvCreateImage(cvSize(thresholded.cols, thresholded.rows), IPL_DEPTH_32F, 1);
-
-				IplImage* thresh = cvCloneImage(&(IplImage)thresholded);
-
-				for (int row = 0; row < thresholded.rows; row++)
-				{
-					for (int col = 0; col < thresholded.cols; col++)
-					{
-						CV_IMAGE_ELEM(thresholdedImage, float, row, col) = thresholded.at<byte>(row, col);
-					}
-				}
-				//IplImage* thresholdedImage = cvCloneImage(&(IplImage)thresholded);
-				cvSaveImage("thresholdedImage-cloned.png", thresholdedImage);
-				std::vector<Ray> rays;
-				std::vector<std::vector<Point2d> > components = findLegallyConnectedComponents(thresholdedImage, rays, thresh);
-
-				int maxInnerComponentArea = 0;
-				int maxInnerComponentIndex = -1;
-				int currentInnerComponentIndex = -1;
-				for (std::vector<std::vector<Point2d> >::iterator it = components.begin();
-					it != components.end(); it++)
-				{
-					currentInnerComponentIndex++;
-					float mean, variance, median;
-					int minx, miny, maxx, maxy;
-					float meanColor, varianceColor, medianColor;
-					componentStats(thresholdedImage, (*it), mean, variance, median, minx, miny,
-						maxx, maxy,
-						meanColor, varianceColor, medianColor, thresh);
-
-					Point2d bb1;
-					bb1.x = minx;
-					bb1.y = miny;
-
-					Point2d bb2;
-					bb2.x = maxx;
-					bb2.y = maxy;
-					std::pair<Point2d, Point2d> pair(bb1, bb2);
-
-					int width = maxx - minx + 1;
-					int height = maxy - miny + 1;
-
-					int area = width * height;
-
-					if (area > maxInnerComponentArea)
-					{
-						maxInnerComponentArea = area;
-						maxInnerComponentIndex = currentInnerComponentIndex;
-					}
-				}
-
-				IplImage * thresholdedMaxComp = cvCreateImage(cvSize(componentRoi.cols, componentRoi.rows), IPL_DEPTH_8U, 1);
-				cvSet(thresholdedMaxComp, cvScalar(0));
-
-				if (maxInnerComponentIndex >= 0)
-				{
-					std::vector<Point2d> maxComp = components[maxInnerComponentIndex];
-					for (std::vector<Point2d>::iterator pit = maxComp.begin(); pit != maxComp.end(); pit++)
-					{
-						CV_IMAGE_ELEM(thresholdedMaxComp, byte, pit->y, pit->x) = 255;
-					}
-				}
-
-				cvSaveImage("thresholdedMaxComp.png", thresholdedMaxComp);
-
-				cvSaveImage("componentRoi.png", thresholdedImage);
-
-#if 0
-				cv::Moments mu = cv::moments(thresholded, true);
-				std::cout << "mu02=" << mu.mu02 << " mu11=" << mu.mu11 << " skew="
-					<< mu.mu11 / mu.mu02 << std::endl;
-#endif
-				cv::imwrite("thresholded.png", thresholded);
-
-				cv::Mat thresholdMat(thresholdedMaxComp);
-				thresholdMat.copyTo(componentsImg(roi));
-				//cv::threshold(thresholdMat, componentsImg(roi), 0 // the value doesn't matter for Otsu thresholding
-				//		, 255 // we could choose any non-zero value. 255 (white) makes it easy to see the binary image
-				//		, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
-			}
+			GetAndBinarizeOnlySelectedComponents(componentsImg, grayMat, compCoords, i, params, chains, compBB, chainBB);
 			cv::imwrite("bib-components.png", componentsImg);
 
 			cv::Mat rotMatrix = cv::getRotationMatrix2D(center, theta_deg, 1.0);
@@ -375,158 +598,7 @@ int TextRecognizer::recognize(IplImage *input,
 			tess.SetImage((uchar*)mat.data, mat.cols, mat.rows, 1, mat.step1());
 			// Get the text
 			char* out = tess.GetUTF8Text();
-			do {
-				if (strlen(out) == 0) {
-					break;
-				}
-				std::string s_out(out);
-				boost::algorithm::trim(s_out);
-
-				if (s_out.size() != chains[i].components.size()) {
-					LOGL(LOG_TEXTREC,
-						"Text size mismatch: expected " << chains[i].components.size() << " digits, got '" << s_out << "' (" << s_out.size() << " digits)");
-					break;
-				}
-				/* if first character is a '0' we have a partially occluded number */
-				if (s_out[0] == '0') {
-					LOGL(LOG_TEXTREC, "Text begins with '0' (partially occluded)");
-					break;
-				}
-				if (!is_number(s_out)) {
-					LOGL(LOG_TEXTREC, "Text is not a number ('" << s_out << "')");
-					break;
-				}
-
-				/* adjust width to size of 6 digits */
-				int charWidth = (chainBB[i].second.x - chainBB[i].first.x)
-					/ s_out.size();
-				int width = 6 * charWidth;
-				/* adjust to 2 width/height aspect ratio */
-				int height = width / 2;
-				int midx = center.x;
-				int midy = center.y;
-
-				cv::Rect roi = cv::Rect(midx - width / 2, midy - height / 2, width,
-					height);
-				if ((roi.x >= 0) && (roi.y >= 0)
-					&& (roi.x + roi.width < inputMat.cols)
-					&& (roi.y + roi.height < inputMat.rows)) {
-					cv::Mat bibMat = inputMat(roi);
-
-					if (s_out.size() <= (unsigned)params.modelVerifLenCrit) {
-
-						if (svmModel.empty()) {
-							LOGL(LOG_TEXTREC, "Reject " << s_out << " on no model");
-							break;
-						}
-
-						if (minHeight < params.modelVerifMinHeight) {
-							LOGL(LOG_TEXTREC,
-								"Reject " << s_out << " on small height");
-							goto bibnumber_succ;
-						}
-
-						/* if we have an SVM Model, predict */
-
-						CvSVM svm;
-						cv::HOGDescriptor hog(cv::Size(128, 64), /* windows size */
-							cv::Size(16, 16), /* block size */
-							cv::Size(8, 8), /* block stride */
-							cv::Size(8, 8), /* cell size */
-							9 /* nbins */
-							);
-						std::vector<float> descriptor;
-
-						/* resize to HOGDescriptor dimensions */
-						cv::Mat resizedMat;
-						cv::resize(bibMat, resizedMat, hog.winSize, 0, 0);
-						hog.compute(resizedMat, descriptor);
-
-						/* load SVM model */
-						svm.load(svmModel.c_str());
-						float prediction = svm.predict(cv::Mat(descriptor).t());
-						LOGL(LOG_SVM, "Prediction=" << prediction);
-						if (prediction < 0.5) {
-							LOGL(LOG_TEXTREC,
-								"Reject " << s_out << " on low SVM prediction");
-							goto bibnumber_succ;
-						}
-					}
-
-					/* symmetry check */
-					if (   //(i == 4) &&
-						(1)) {
-						cv::Mat inputRotated = cv::Mat::zeros(inputMat.rows,
-							inputMat.cols, inputMat.type());
-						cv::warpAffine(inputMat, inputRotated, rotMatrix,
-							inputRotated.size());
-
-						int minOffset = 0;
-						double min = 1e6;
-						//width = 12 * charWidth;
-						for (int offset = -50; offset < 30; offset += 2) {
-
-							/* resize to HOGDescriptor dimensions */
-							cv::Mat straightMat;
-							cv::Mat flippedMat;
-
-							/* extract shifted ROI */
-							cv::Rect roi = cv::Rect(midx - width / 2 + offset,
-								midy - height / 2, width, height);
-
-							if ((roi.x >= 0) && (roi.y >= 0)
-								&& (roi.x + roi.width < inputMat.cols)
-								&& (roi.y + roi.height < inputMat.rows)) {
-								straightMat = inputRotated(roi);
-								cv::flip(straightMat, flippedMat, 1);
-								cv::Scalar mssimV = getMSSIM(straightMat,
-									flippedMat);
-								double avgMssim = (mssimV.val[0] + mssimV.val[1]
-									+ mssimV.val[2]) * 100 / 3;
-								double dist = 1 / (avgMssim + 1);
-								LOGL(LOG_SYMM_CHECK, "offset=" << offset << " dist=" << dist);
-								if (dist < min) {
-									min = dist;
-									minOffset = offset;
-									cv::imwrite("symm-max.png", straightMat);
-									cv::Mat visualImage;
-								}
-							}
-						}
-
-						LOGL(LOG_SYMM_CHECK, "MinOffset = " << minOffset
-							<< " charWidth=" << charWidth);
-
-						if (absd(minOffset) > charWidth / 3) {
-							LOGL(LOG_TEXTREC,
-								"Reject " << s_out << " on asymmetry");
-							std::cout << "Reject " << s_out << " on asymmetry"
-								<< std::endl;
-							goto bibnumber_succ;
-						}
-					}
-
-					/* save for training only if orientation is ~horizontal */
-					if (abs(theta_deg) < 7) {
-						char filename[MAX_PATH];
-						sprintf(filename, "bib-%05d-%04d.png", this->bsid++,
-							atoi(out));
-						cv::imwrite(filename, bibMat);
-						//free(filename);
-					}
-
-				}
-				else {
-					LOGL(LOG_TEXTREC, "Reject as ROI outside boundaries");
-					goto bibnumber_succ;
-				}
-
-				/* all fine, add this bib number */
-			bibnumber_succ:
-				text.push_back(s_out);
-				LOGL(LOG_TEXTREC, "Bib number: '" << s_out << "'");
-
-			} while (0);
+			CheckRecognizedString(out, i, params, chains, compBB, chainBB, text);	
 			free(out);
 		}
 

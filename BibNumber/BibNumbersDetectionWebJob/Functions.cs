@@ -16,7 +16,7 @@ namespace BibNumbersDetectionWebJob
 {
     public class Functions
     {
-        private static BibNumbersMysqlContext db = new BibNumbersMysqlContext();
+        //private static BibNumbersMysqlContext db = new BibNumbersMysqlContext();
         // This function will get triggered/executed when a new message is written 
         // on an Azure Queue called queue.
         //public async static Task ProcessPhotoMessage([QueueTrigger("detectbibnumbersqueue")] string message)
@@ -41,35 +41,38 @@ namespace BibNumbersDetectionWebJob
 
         public async static void ProcessAlbum(PhotoAlbum album)
         {
-            var foundAlbum = db.PhotoAlbumSet.FirstOrDefault(a => a.Id == album.Id);
-
-            if(foundAlbum != null)
+            using (BibNumbersMysqlContext db = new BibNumbersMysqlContext())
             {
-                var photosCount = foundAlbum.Photos.Count;
-                foundAlbum.DetectionProgress = 0;
-                db.Entry(foundAlbum).State = EntityState.Modified;
-                db.SaveChanges();
-                await CommunicateProgress(album.Id, 0);
+                var foundAlbum = db.PhotoAlbumSet.FirstOrDefault(a => a.Id == album.Id);
 
-                for (int photoIndex = 0; photoIndex < photosCount; photoIndex++)
+                if (foundAlbum != null)
                 {
-                    int percentage = ((photoIndex + 1) * 100) / photosCount;
-                    foundAlbum.DetectionProgress = percentage;
+                    var photosCount = foundAlbum.Photos.Count;
+                    foundAlbum.DetectionProgress = 0;
                     db.Entry(foundAlbum).State = EntityState.Modified;
                     db.SaveChanges();
-                    var photo = foundAlbum.Photos.ElementAt(photoIndex);
-                    ProcessPhoto(photo);
-                    await CommunicateProgress(foundAlbum.Id, percentage);
-                }
+                    await CommunicateProgress(album.Id, 0);
 
-                album.DetectionProgress = 100;
-                db.Entry(foundAlbum).State = EntityState.Modified;
-                db.SaveChanges();
+                    for (int photoIndex = 0; photoIndex < photosCount; photoIndex++)
+                    {
+                        int percentage = ((photoIndex + 1) * 100) / photosCount;
+                        foundAlbum.DetectionProgress = percentage;
+                        db.Entry(foundAlbum).State = EntityState.Modified;
+                        db.SaveChanges();
+                        var photo = foundAlbum.Photos.ElementAt(photoIndex);
+                        ProcessPhoto(photo, db);
+                        await CommunicateProgress(foundAlbum.Id, percentage);
+                    }
+
+                    album.DetectionProgress = 100;
+                    db.Entry(foundAlbum).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
             }
                     
         }
 
-        public static void ProcessPhoto(Photo photo)
+        public static void ProcessPhoto(Photo photo, BibNumbersMysqlContext db)
         {
             var tempFile = Path.GetTempFileName();
             using (WebClient webClient = new WebClient())

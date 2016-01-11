@@ -20,6 +20,13 @@ static void help() {
 			<< endl;
 }
 
+
+/// <summary>
+/// This is the main method that is executed when the program starts.
+/// </summary>
+/// <param name="argc">The argc.</param>
+/// <param name="argv">The argv.</param>
+/// <returns></returns>
 int main(int argc, const char** argv) {
 	string inputName;
 	string trainDir;

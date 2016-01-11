@@ -9,12 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BibNumberWeb", "BibNumberWe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoProvider", "PhotoProvider\PhotoProvider.csproj", "{B0E99A9A-F99E-4010-949B-E1BB378E6668}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RajceTester", "RajceTester\RajceTester.csproj", "{AFFC4537-0A13-4F54-B9E7-F99743C3B525}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BibNumberDotNet", "BibNumberDotNet\BibNumberDotNet.csproj", "{70C5B68C-6ECE-4EEC-A819-E351238A9502}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StronglyConnectedComponents", "StronglyConnectedComponents\StronglyConnectedComponents.csproj", "{E387991E-EE65-442C-AB2A-4EA35A7EB83B}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BibNumberWrapper", "BibNumberWrapper\BibNumberWrapper.vcxproj", "{FEE2414D-472C-4E7B-A7A7-A52A8322E0DA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D05F3155-3A52-40CC-8569-58C59FCF5A31} = {D05F3155-3A52-40CC-8569-58C59FCF5A31}
@@ -62,36 +56,6 @@ Global
 		{B0E99A9A-F99E-4010-949B-E1BB378E6668}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B0E99A9A-F99E-4010-949B-E1BB378E6668}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{B0E99A9A-F99E-4010-949B-E1BB378E6668}.Release|Win32.ActiveCfg = Release|Any CPU
-		{AFFC4537-0A13-4F54-B9E7-F99743C3B525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AFFC4537-0A13-4F54-B9E7-F99743C3B525}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AFFC4537-0A13-4F54-B9E7-F99743C3B525}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{AFFC4537-0A13-4F54-B9E7-F99743C3B525}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{AFFC4537-0A13-4F54-B9E7-F99743C3B525}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{AFFC4537-0A13-4F54-B9E7-F99743C3B525}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AFFC4537-0A13-4F54-B9E7-F99743C3B525}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AFFC4537-0A13-4F54-B9E7-F99743C3B525}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{AFFC4537-0A13-4F54-B9E7-F99743C3B525}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{AFFC4537-0A13-4F54-B9E7-F99743C3B525}.Release|Win32.ActiveCfg = Release|Any CPU
-		{70C5B68C-6ECE-4EEC-A819-E351238A9502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{70C5B68C-6ECE-4EEC-A819-E351238A9502}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{70C5B68C-6ECE-4EEC-A819-E351238A9502}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{70C5B68C-6ECE-4EEC-A819-E351238A9502}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{70C5B68C-6ECE-4EEC-A819-E351238A9502}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{70C5B68C-6ECE-4EEC-A819-E351238A9502}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{70C5B68C-6ECE-4EEC-A819-E351238A9502}.Release|Any CPU.Build.0 = Release|Any CPU
-		{70C5B68C-6ECE-4EEC-A819-E351238A9502}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{70C5B68C-6ECE-4EEC-A819-E351238A9502}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{70C5B68C-6ECE-4EEC-A819-E351238A9502}.Release|Win32.ActiveCfg = Release|Any CPU
-		{E387991E-EE65-442C-AB2A-4EA35A7EB83B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E387991E-EE65-442C-AB2A-4EA35A7EB83B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E387991E-EE65-442C-AB2A-4EA35A7EB83B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E387991E-EE65-442C-AB2A-4EA35A7EB83B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E387991E-EE65-442C-AB2A-4EA35A7EB83B}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{E387991E-EE65-442C-AB2A-4EA35A7EB83B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E387991E-EE65-442C-AB2A-4EA35A7EB83B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E387991E-EE65-442C-AB2A-4EA35A7EB83B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E387991E-EE65-442C-AB2A-4EA35A7EB83B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{E387991E-EE65-442C-AB2A-4EA35A7EB83B}.Release|Win32.ActiveCfg = Release|Any CPU
 		{FEE2414D-472C-4E7B-A7A7-A52A8322E0DA}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{FEE2414D-472C-4E7B-A7A7-A52A8322E0DA}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{FEE2414D-472C-4E7B-A7A7-A52A8322E0DA}.Debug|Mixed Platforms.Build.0 = Debug|Win32

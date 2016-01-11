@@ -111,6 +111,11 @@ std::vector<std::pair<CvPoint, CvPoint> > findBoundingBoxes(
 	return bb;
 }
 
+/// <summary>
+/// Normalizes the image.
+/// </summary>
+/// <param name="input">The input.</param>
+/// <param name="output">The output.</param>
 void normalizeImage(IplImage * input, IplImage * output) {
 	assert(input->depth == IPL_DEPTH_32F);
 	assert(input->nChannels == 1);
@@ -271,19 +276,13 @@ void renderChainsWithBoxes(IplImage * SWTImage,
 
 	renderComponents(SWTImage, componentsRed, outTemp);
 
-	std::cout << "After chaining 2 --- " << std::endl;
-
 	bb = findBoundingBoxes(chains, compBB, outTemp);
-
-	std::cout << "After chaining 3 --- " << std::endl;
 
 	IplImage * out = cvCreateImage(cvGetSize(output), IPL_DEPTH_8U, 1);
 	cvConvertScale(outTemp, out, 255, 0);
 	cvCvtColor(out, output, CV_GRAY2RGB);
 	cvReleaseImage(&out);
 	cvReleaseImage(&outTemp);
-
-	std::cout << "After chaining 4 --- " << std::endl;
 }
 
 void renderChains(IplImage * SWTImage,
@@ -325,6 +324,14 @@ TextDetector::~TextDetector(void)
 {
 }
 
+/// <summary>
+/// Detects connected components on the input image.
+/// </summary>
+/// <param name="input">The input.</param>
+/// <param name="params">The parameters that are used to ignore components that do not satisfied requirements</param>
+/// <param name="chains">chains that was created by joining connected components</param>
+/// <param name="compBB">rectangle areas of connected components. will be filled in the method.</param>
+/// <param name="chainBB">rectangle area of chains. will be filled in the method.</param>
 void TextDetector::detect(IplImage * input,
 		const struct TextDetectionParams &params,
 		std::vector<Chain> &chains,
@@ -332,23 +339,13 @@ void TextDetector::detect(IplImage * input,
 		std::vector<std::pair<CvPoint, CvPoint> > &chainBB) {
 	assert(input->depth == IPL_DEPTH_8U);
 	assert(input->nChannels == 3);
-	std::cout << "TextDetector::detect(IplImage * input," << std::endl;
 	CvSize size = cvGetSize(input);
 	if (size.height > 0
 		&& size.width > 0)
 	{
-		LARGE_INTEGER start, finish, freq;
-		QueryPerformanceFrequency(&freq);
-		QueryPerformanceCounter(&start);
-		// Do something
-
+		
 		// Convert to grayscale
-		std::cout << "TextDetector::detect -- IplImage * grayImage = cvCreateImage" << std::endl;
-
-		std::cout << "TextDetector::detect -- IplImage * grayImage = cvCreateImage h:" << size.height << "-  w:" << size.width << std::endl;
 		IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
-
-		std::cout << "TextDetector::detect -- IplImage * grayImage = cvCreateImage END" << std::endl;
 		cvCvtColor(input, grayImage, CV_RGB2GRAY);
 		IplImage * edgeSmoothedImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 		EdgePreservingSmoothing(grayImage, edgeSmoothedImage);
@@ -396,18 +393,9 @@ void TextDetector::detect(IplImage * input,
 			}
 		}
 
-		QueryPerformanceCounter(&finish);
-		std::cout << "Preprocessing : "
-			<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
-		QueryPerformanceCounter(&start);
-
 		strokeWidthTransform(edgeImage, gradientX, gradientY, params, SWTImage,
 			rays);
 
-		QueryPerformanceCounter(&finish);
-		std::cout << "SWT : "
-			<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
-		QueryPerformanceCounter(&start);
 
 		//cvConvertScale(gradientX, gradientX, 255., 0);
 		//cvConvertScale(gradientY, gradientY, 255., 0);
@@ -432,19 +420,11 @@ void TextDetector::detect(IplImage * input,
 		// return type is a vector of vectors, where each outer vector is a component and
 		// the inner vector contains the (y,x) of each pixel in that component.
 		cvSaveImage("grayImg.png", grayImage);
-		QueryPerformanceCounter(&finish);
-		std::cout << "Code between STW and finding components : "
-			<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
-		QueryPerformanceCounter(&start);
-
+	
 		std::vector<std::vector<Point2d> > components =
 			findLegallyConnectedComponents(SWTImage, rays, edgeSmoothedImage);
 
-		QueryPerformanceCounter(&finish);
-		std::cout << "Finding components : "
-			<< ((finish.QuadPart - start.QuadPart) / (double)freq.QuadPart) << std::endl;
-		QueryPerformanceCounter(&start);
-
+	
 		IplImage * connectedComponentsImg = cvCreateImage(cvGetSize(input), 8U, 3);
 		//cvCopy(SWTImage, connectedComponentsImg, NULL);
 		for (std::vector<std::vector<Point2d> >::iterator it = components.begin();
@@ -745,7 +725,7 @@ std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
 						
 				}
 				if (row + 1 < SWTImage->height) {
-					/*if (col + 1 < SWTImage->width) {
+					if (col + 1 < SWTImage->width) {
 						float right_down = CV_IMAGE_ELEM(SWTImage, float,
 								row + 1, col + 1);
 						if (right_down > 0
@@ -755,7 +735,7 @@ std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
 									map.at(
 											(row + 1) * SWTImage->width + col
 													+ 1), g);
-					}*/
+					}
 					float down = CV_IMAGE_ELEM(SWTImage, float, row + 1, col);
 
 					if (down > 0)
@@ -781,7 +761,7 @@ std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
 						}
 					}
 						
-					/*if (col - 1 >= 0) {
+					if (col - 1 >= 0) {
 						float left_down = CV_IMAGE_ELEM(SWTImage, float,
 								row + 1, col - 1);
 						if (left_down > 0
@@ -791,7 +771,7 @@ std::vector<std::vector<Point2d> > findLegallyConnectedComponents(
 									map.at(
 											(row + 1) * SWTImage->width + col
 													- 1), g);
-					}*/
+					}
 				}
 			}
 			ptr++;
@@ -958,6 +938,21 @@ void GetNeighbours(Point2d point, std::vector<Point2d> & neighbours)
 		point.y + 1));
 }
 
+/// <summary>Computes statistics of components values that are used for filtering.
+/// </summary>
+/// <param name="SWTImage">The SWT image.</param>
+/// <param name="component">The component.</param>
+/// <param name="mean">The mean.</param>
+/// <param name="variance">The variance.</param>
+/// <param name="median">The median.</param>
+/// <param name="minx">The minx.</param>
+/// <param name="miny">The miny.</param>
+/// <param name="maxx">The maxx.</param>
+/// <param name="maxy">The maxy.</param>
+/// <param name="meanColor">Color of the mean.</param>
+/// <param name="varianceColor">Color of the variance.</param>
+/// <param name="medianColor">Color of the median.</param>
+/// <param name="img">The img.</param>
 void componentStats(IplImage * SWTImage, const std::vector<Point2d> & component,
 		float & mean, float & variance, float & median, int & minx, int & miny,
 		int & maxx, int & maxy,
@@ -1011,6 +1006,18 @@ void componentStats(IplImage * SWTImage, const std::vector<Point2d> & component,
 	medianColor = tempColor[tempColor.size() / 2];
 }
 #define NO_FILTER
+/// <summary>
+/// Filters the components accoridng to the requirements.
+/// </summary>
+/// <param name="SWTImage">The SWT image.</param>
+/// <param name="components">The components.</param>
+/// <param name="validComponents">The valid components.</param>
+/// <param name="compCenters">The comp centers.</param>
+/// <param name="compMedians">The comp medians.</param>
+/// <param name="compDimensions">The comp dimensions.</param>
+/// <param name="compBB">The comp bb.</param>
+/// <param name="params">The parameters.</param>
+/// <param name="img">The img.</param>
 void filterComponents(IplImage * SWTImage,
 		std::vector<std::vector<Point2d> > & components,
 		std::vector<std::vector<Point2d> > & validComponents,
@@ -1254,7 +1261,16 @@ bool includes(std::vector<int> v, std::vector<int> V)
 	}
 	return true;
 }
-
+/// <summary>
+/// Joins connected components to chains if the requirements to join are satisfied.
+/// </summary>
+/// <param name="colorImage">The color image.</param>
+/// <param name="components">The components.</param>
+/// <param name="compCenters">centers of components</param>
+/// <param name="compMedians">medians of components</param>
+/// <param name="compDimensions">dimensions of compoenents</param>
+/// <param name="params">requirements that are checked before two components are joined to chain</param>
+/// <returns></returns>
 std::vector<Chain> makeChains(IplImage * colorImage,
 		std::vector<std::vector<Point2d> > & components,
 		std::vector<Point2dFloat> & compCenters,
@@ -1291,7 +1307,6 @@ std::vector<Chain> makeChains(IplImage * colorImage,
 	std::vector<Chain> chains;
 	for (unsigned int i = 0; i < components.size(); i++) {
 		for (unsigned int j = i + 1; j < components.size(); j++) {
-			// TODO add color metric
 			float iCompMedian = compMedians[i];
 			float jCompMedian = compMedians[j];
 

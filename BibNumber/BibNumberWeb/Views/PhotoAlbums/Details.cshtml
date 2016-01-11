@@ -17,25 +17,25 @@
 <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
 <script src="~/signalr/hubs"></script>
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var jobId = "@Model.Id";
+<script type="text/javascript">
+    $(document).ready(function () {
+        var jobId = "@Model.Id";
 
-            // Reference the auto-generated proxy for the hub.
-            var jobProgressHub = $.connection.jobProgressHub;
+        // Reference the auto-generated proxy for the hub.
+        var jobProgressHub = $.connection.jobProgressHub;
 
-            // Create a function that the hub can call back to display progress
-            jobProgressHub.client.updateProgress = function (progress) {
-                $("#progressbar").width(progress + '%');
+        // Create a function that the hub can call back to display progress
+        jobProgressHub.client.updateProgress = function (progress) {
+            $("#progressbar").width(progress + '%');
 
-                console.log("Progress: " + progress);
-            };
+            console.log("Progress: " + progress);
+        };
 
-            $.connection.hub.logging = true;
-            $.connection.hub.qs = "jobId=" + jobId;
-            $.connection.hub.start();
-        });
-    </script>
+        $.connection.hub.logging = true;
+        $.connection.hub.qs = "jobId=" + jobId;
+        $.connection.hub.start();
+    });
+</script>
 
 }
 
