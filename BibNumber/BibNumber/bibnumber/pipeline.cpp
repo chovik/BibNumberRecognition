@@ -149,12 +149,10 @@ int Pipeline::processImage(
 		cv::Rect roi = ComputeTorsoArea(*r, cvRect(0, 0, resizedImg.cols, resizedImg.rows));
 
 		//rectangle( img, roi, color, 3, 8, 0);
-		std::cout << "Pipeline::processImage - cv::Mat subImage(img, roi);" << std::endl;
 		if (roi.x > 0 && roi.x < resizedImg.rows
 			&& roi.y > 0 && roi.y < resizedImg.cols)
 		{
 			cv::Mat subImage(resizedImg, roi);
-			std::cout << "Pipeline::processImage - cv::Mat subImage(img, roi); END" << std::endl;
 			IplImage ipl_img = subImage;
 			if ( //(i==10) &&
 				(1)) {
@@ -222,7 +220,6 @@ int Pipeline::processImage(
 	vectorAtoi(bibNumbers, text);
 #endif
 	cv::imwrite("face-detection.png", resizedImg);
-	std::cout << "Pipeline::processImage -  END" << std::endl;
 
 	return 0;
 
