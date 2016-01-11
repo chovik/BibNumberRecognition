@@ -87,39 +87,47 @@ namespace BibNumberWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Url,Name")] PhotoAlbum photoAlbum)
         {
-            if (ModelState.IsValid)
+            try
             {
-                RajcePhotoProvider photoProvider = new RajcePhotoProvider();
-                var photoList = await photoProvider.GetPhotoList(photoAlbum.Url);
-
-                if (photoList != null
-                    && photoList.Count() > 0)
+                if (ModelState.IsValid)
                 {
-                    foreach (var photo in photoList)
+                    RajcePhotoProvider photoProvider = new RajcePhotoProvider();
+                    var photoList = await photoProvider.GetPhotoList(photoAlbum.Url);
+
+                    if (photoList != null
+                        && photoList.Count() > 0)
                     {
-                        var photoModel = new Photo()
+                        foreach (var photo in photoList)
                         {
-                            Url = photo.Url,
-                            ThumbnailUrl = photo.ThumbnailUrl
-                        };
+                            var photoModel = new Photo()
+                            {
+                                Url = photo.Url,
+                                ThumbnailUrl = photo.ThumbnailUrl
+                            };
 
-                        photoAlbum.Photos.Add(photoModel);
-                        
+                            photoAlbum.Photos.Add(photoModel);
+
+                        }
                     }
+
+                    db.PhotoAlbumSet.Add(photoAlbum);
+                    await db.SaveChangesAsync();
+
+                    await DetectBibNumbers(photoAlbum);
+
+                    //foreach(var photo in photoAlbum.Photos)
+                    //{
+                    //    await DetectBibNumbers(photo);
+                    //}
+
+                    return Redirect("~/PhotoAlbums/Details/" + photoAlbum.Id);
                 }
-
-                db.PhotoAlbumSet.Add(photoAlbum);
-                await db.SaveChangesAsync();
-
-                await DetectBibNumbers(photoAlbum);
-
-                //foreach(var photo in photoAlbum.Photos)
-                //{
-                //    await DetectBibNumbers(photo);
-                //}
-
-                return Redirect("~/PhotoAlbums/Details/" + photoAlbum.Id);
             }
+            catch(Exception ex)
+            {
+
+            }
+            
 
             return View(photoAlbum);
         }

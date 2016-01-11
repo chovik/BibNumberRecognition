@@ -16,16 +16,16 @@
     @Scripts.Render("~/bundles/image-gallery")
 }
 
-<h2>Search</h2>
+<h2>Results</h2>
 
-<form method="post"
+@*<form method="post"
       action="@Url.Action("Search", "PhotoAlbums")/@Model.Id/">
     <div>
         <label for="SearchQuery">Search:</label>
         <input type="text" name="SearchQuery" value="@TempData["SearchQuery"]"
                style="color:black" />
     </div>
-</form>
+</form>*@
 
 <div class="container">
     <br>
@@ -75,6 +75,6 @@
     </div>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @*@Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")*@
 </p>
