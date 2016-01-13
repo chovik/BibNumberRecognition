@@ -12,6 +12,9 @@ namespace BibNumberWeb
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
     
     public partial class PhotoAlbum
     {
@@ -21,6 +24,7 @@ namespace BibNumberWeb
         }
     
         public int Id { get; set; }
+        [Required(ErrorMessage = "Url is required")]
         public string Url { get; set; }
         public string Name { get; set; }
         public int DetectionProgress { get; set; }

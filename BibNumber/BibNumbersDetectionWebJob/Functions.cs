@@ -78,6 +78,7 @@ namespace BibNumbersDetectionWebJob
             using (WebClient webClient = new WebClient())
             {
                 webClient.DownloadFile(photo.Url, tempFile);
+                Console.Write("photo url: " + photo.Url);
                 Class1 c = new Class1();
                 var foundBibNumbers = c.DetectNumbers(tempFile);
 
@@ -100,8 +101,8 @@ namespace BibNumbersDetectionWebJob
             var httpClient = new HttpClient();
 
             var queryString = String.Format("?jobId={0}&progress={1}", jobId, percentage);
-            var request = "http://localhost:2221/PhotoAlbums/ProgressNotification" + queryString;
-
+            var request = "https://bibnumbers.azurewebsites.net/PhotoAlbums/ProgressNotification" + queryString;
+            Console.Write("request: " + request);
             await httpClient.GetAsync(request);
         }
     }

@@ -117,7 +117,6 @@ int Pipeline::processImage(
 		std::string svmModel,
 		std::vector<int>& bibNumbers) {
 
-	std::cout << "Pipeline::processImage " << std::endl;
 	cv::Mat resizedImg = ResizeInput(img);
 #if 0
 	int res;
