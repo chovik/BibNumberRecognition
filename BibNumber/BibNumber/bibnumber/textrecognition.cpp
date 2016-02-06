@@ -442,11 +442,11 @@ void CheckRecognizedString(char* out,
 	std::string s_out(out);
 	boost::algorithm::trim(s_out);
 
-	if (s_out.size() != chains[i].components.size()) {
-		LOGL(LOG_TEXTREC,
-			"Text size mismatch: expected " << chains[i].components.size() << " digits, got '" << s_out << "' (" << s_out.size() << " digits)");
-		return;
-	}
+	//if (s_out.size() != chains[i].components.size()) {
+	//	LOGL(LOG_TEXTREC,
+	//		"Text size mismatch: expected " << chains[i].components.size() << " digits, got '" << s_out << "' (" << s_out.size() << " digits)");
+	//	return;
+	//}
 	/* if first character is a '0' we have a partially occluded number */
 	if (s_out[0] == '0')
 	{
@@ -534,11 +534,11 @@ int TextRecognizer::recognize(IplImage *input,
 			double theta_deg = 180
 				* atan2(chains[i].direction.y, chains[i].direction.x) / PI;
 
-			if (absd(theta_deg) > params.maxAngle) {
-				LOGL(LOG_TXT_ORIENT,
-					"Chain angle " << theta_deg << " exceeds max " << params.maxAngle);
-				continue;
-			}
+			//if (absd(theta_deg) > params.maxAngle) {
+			//	LOGL(LOG_TXT_ORIENT,
+			//		"Chain angle " << theta_deg << " exceeds max " << params.maxAngle);
+			//	continue;
+			//}
 
 			LOGL(LOG_TXT_ORIENT,
 				"Chain #" << i << " Angle: " << theta_deg << " degrees");

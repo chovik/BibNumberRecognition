@@ -23,7 +23,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -53,13 +53,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>F:\Thesis\include;F:\Thesis\boost_1_59_0;D:\Users\Michal\opencv2411\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\Thesis\include;F:\Thesis\boost_1_59_0;D:\Users\Michal\opencv2411\opencv\build\include;F:\Installers\FreeImage3170Win32Win64\FreeImage\Dist\x32;F:\Installers\freetype-2.6.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>F:\Thesis\tesseract\DLL_Debug;F:\opencv-build\lib\Debug;F:\Boostbuild-vs12-x86\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libtesseract304d.lib;opencv_core2411d.lib;opencv_imgproc2411d.lib;opencv_highgui2411d.lib;opencv_ml2411d.lib;opencv_video2411d.lib;opencv_features2d2411d.lib;opencv_calib3d2411d.lib;opencv_objdetect2411d.lib;opencv_contrib2411d.lib;opencv_legacy2411d.lib;opencv_flann2411d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:\Thesis\tesseract\DLL_Debug;F:\opencv-build\lib\Debug;F:\Boostbuild-vs12-x86\lib;F:\Installers\FreeImage3170Win32Win64\FreeImage\Dist\x32;F:\Installers\freetype-2.6.2\objs\vc2010\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libtesseract304d.lib;opencv_core2411d.lib;opencv_imgproc2411d.lib;opencv_highgui2411d.lib;opencv_ml2411d.lib;opencv_video2411d.lib;opencv_features2d2411d.lib;opencv_calib3d2411d.lib;opencv_objdetect2411d.lib;opencv_contrib2411d.lib;opencv_legacy2411d.lib;opencv_flann2411d.lib;FreeImage.lib;freetype262d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -72,6 +72,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>F:\Thesis\include;F:\Thesis\boost_1_59_0;D:\Users\Michal\opencv2411\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -86,8 +87,159 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Robust-Text-Detection-master\Robust-Text-Detection-master\RobustTextDetection\ConnectedComponent.h" />
+    <ClInclude Include="..\..\..\Robust-Text-Detection-master\Robust-Text-Detection-master\RobustTextDetection\RobustTextDetection.h" />
     <ClInclude Include="bibnumber\batch.h" />
     <ClInclude Include="bibnumber\facedetection.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_alpha_mask_u8.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_arc.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_array.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_arrowhead.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_basics.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_bezier_arc.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_bitset_iterator.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_blur.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_bounding_rect.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_bspline.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_clip_liang_barsky.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_color_conv.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_color_conv_rgb16.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_color_conv_rgb8.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_color_gray.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_color_rgba.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_config.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_adaptor_vcgen.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_adaptor_vpgen.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_bspline.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_clip_polygon.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_clip_polyline.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_close_polygon.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_concat.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_contour.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_curve.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_dash.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_gpc.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_marker.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_marker_adaptor.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_segmentator.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_shorten_path.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_smooth_poly1.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_stroke.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_transform.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_unclose_polygon.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_curves.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_dda_line.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_ellipse.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_ellipse_bresenham.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_embedded_raster_fonts.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_font_cache_manager.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_font_freetype.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_font_win32_tt.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_gamma_functions.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_gamma_lut.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_glyph_raster_bin.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_gradient_lut.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_gsv_text.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_image_accessors.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_image_filters.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_line_aa_basics.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_math.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_math_stroke.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_path_length.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_path_storage.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_path_storage_integer.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pattern_filters_rgba.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_amask_adaptor.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_gray.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_rgb.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_rgba.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_rgb_packed.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_transposer.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_cells_aa.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_compound_aa.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_outline.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_outline_aa.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_scanline_aa.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_sl_clip.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_base.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_markers.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_mclip.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_outline_aa.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_outline_image.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_primitives.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_raster_text.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_scanline.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rendering_buffer.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rendering_buffer_dynarow.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rounded_rect.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_bin.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_boolean_algebra.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_p.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_storage_aa.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_storage_bin.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_u.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_shorten_path.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_simul_eq.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_allocator.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_converter.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_gouraud.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_gouraud_gray.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_gouraud_rgba.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_gradient.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_gradient_alpha.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_image_filter.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_image_filter_gray.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_image_filter_rgb.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_image_filter_rgba.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_interpolator_adaptor.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_interpolator_linear.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_interpolator_persp.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_interpolator_trans.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_pattern_gray.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_pattern_rgb.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_pattern_rgba.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_solid.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_subdiv_adaptor.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_affine.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_bilinear.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_double_path.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_perspective.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_single_path.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_viewport.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_warp_magnifier.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_bspline.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_contour.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_dash.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_markers_term.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_smooth_poly1.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_stroke.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_vertex_sequence.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vertex_sequence.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vpgen_clip_polygon.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vpgen_clip_polyline.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vpgen_segmentator.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\Constants.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Arithmetic.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Colour.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Convolution.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Drawing.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_FFT.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Filters.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_HBitmap.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_IO.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_LinearScale.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Logic.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Morphology.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Palettes.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Particle.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Statistics.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Utilities.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Utils.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\kiss_fft.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\kiss_fftnd.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\profile.h" />
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\_kiss_fft_guts.h" />
     <ClInclude Include="bibnumber\log.h" />
     <ClInclude Include="bibnumber\pipeline.h" />
     <ClInclude Include="bibnumber\textdetection.h" />
@@ -97,9 +249,66 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Robust-Text-Detection-master\Robust-Text-Detection-master\RobustTextDetection\ConnectedComponent.cpp" />
+    <ClCompile Include="..\..\..\Robust-Text-Detection-master\Robust-Text-Detection-master\RobustTextDetection\main.cpp" />
+    <ClCompile Include="..\..\..\Robust-Text-Detection-master\Robust-Text-Detection-master\RobustTextDetection\RobustTextDetection.cpp" />
     <ClCompile Include="bibnumber\batch.cpp" />
     <ClCompile Include="bibnumber\bibnumber.cpp" />
     <ClCompile Include="bibnumber\facedetection.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_arc.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_arrowhead.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_bezier_arc.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_bspline.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_curves.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_embedded_raster_fonts.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_font_freetype.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_font_win32_tt.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_gsv_text.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_image_filters.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_line_aa_basics.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_line_profile_aa.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_rounded_rect.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_sqrt_tables.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_trans_affine.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_trans_double_path.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_trans_single_path.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_trans_warp_magnifier.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_bspline.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_contour.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_dash.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_markers_term.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_smooth_poly1.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_stroke.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vpgen_clip_polygon.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vpgen_clip_polyline.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vpgen_segmentator.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Arithmetic.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Border.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Colour.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_ConvexHull.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Convolution.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_DistanceTransform.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Drawing.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_FFT.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_FillHole.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Filters.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_FindImageMaxima.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_FloodFill.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_GradientBlend.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_HBitmap.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_IO.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_LinearScale.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Logic.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_MedianFilter.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Morphology.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Palettes.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_ParticleInfo.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Statistics.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Threshold.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Utilities.cpp" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\kiss_fft.c" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\kiss_fftnd.c" />
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\profile.c" />
     <ClCompile Include="bibnumber\log.cpp" />
     <ClCompile Include="bibnumber\pipeline.cpp" />
     <ClCompile Include="bibnumber\textdetection.cpp" />
@@ -109,6 +318,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Convolution.txx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

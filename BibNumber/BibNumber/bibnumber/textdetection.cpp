@@ -45,7 +45,7 @@
 
 #define COM_MAX_MEDIAN_RATIO (3.0)
 #define COM_MAX_DIM_RATIO (2.0)
-#define COM_MAX_DIST_RATIO (2.0)
+#define COM_MAX_DIST_RATIO (0.8)
 #define COM_MAX_ASPECT_RATIO (4) //it must be great number because of digit 1
 #define COM_MAX_WIDTH_TO_HEIGHT_RATIO (1.3)
 
@@ -343,13 +343,14 @@ void TextDetector::detect(IplImage * input,
 	if (size.height > 0
 		&& size.width > 0)
 	{
-		
+		ImageSegmentationFloodFill(input);
 		// Convert to grayscale
 		IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 		cvCvtColor(input, grayImage, CV_RGB2GRAY);
+		swtDepthMatrix(grayImage, NULL);
 		IplImage * edgeSmoothedImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 		EdgePreservingSmoothing(grayImage, edgeSmoothedImage);
-
+		cv::Mat edgeSmoothMat(edgeSmoothedImage, false);
 		cvSaveImage("edgeSmoothedImage.png", edgeSmoothedImage);
 
 		cv::Mat gray;
@@ -361,7 +362,7 @@ void TextDetector::detect(IplImage * input,
 		double threshold_high = 320;
 		//IplImage * edgeImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 		cv::Mat edge;
-		AutoCanny(&gray, &edge);
+		AutoCanny(&edgeSmoothMat, &edge);
 		//cvCanny(grayImage, edgeImage, threshold_low, threshold_high, 3);
 
 
@@ -526,6 +527,280 @@ double median(cv::Mat * channel)
 	}
 
 	return med;
+}
+
+void swtDepthMatrix(IplImage * img, IplImage * swtImage)
+{
+	IplImage * threshold = cvCreateImage(cvGetSize(img), IPL_DEPTH_8U, 1);
+	cvAdaptiveThreshold(img, threshold, 255, CV_ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY, 11, 5);
+	cvSaveImage("threshold-adaptive.jpg", threshold);
+	IplImage * distances = cvCreateImage(cvGetSize(img), IPL_DEPTH_8U, 1);
+	cvDistTransform(threshold, distances);
+	cvSaveImage("distances.jpg", threshold);
+	
+	//TODO round distances
+
+}
+
+void ImageSegmentationFloodFill(IplImage* img)
+{ 
+	//IplImage* output = cvCloneImage(img);
+	cv::Mat outputMat(img, true);
+	int colorIndex = 0;
+	cv::RNG rng(0xFFFFFFFF);
+	//connectedComp.
+	std::vector<std::vector<LineSegment*>> lineSegments;
+	double diffTolerance = 20;
+	for (int row = 0; row < img->height; row++)
+	{
+		lineSegments.push_back(std::vector<LineSegment*>());
+		int x = 0;
+		FloodRow(outputMat.row(row), cv::Point(x, 0), diffTolerance);
+		//while (x <= img->width - 1)
+		//{
+		//	cv::Rect connectedComp;
+		//	int icolor = (unsigned)rng;
+		//	cv::Scalar randomColor(icolor & 255, (icolor >> 8) & 255, (icolor >> 16) & 255);
+		//	FloodRow(outputMat.row(row), cv::Point(x, 0), diffTolerance);
+		//	cv::floodFill(outputMat.row(row), cv::Point(x, 0), randomColor, &connectedComp, cv::Scalar(diffTolerance, diffTolerance, diffTolerance, diffTolerance), cv::Scalar(diffTolerance, diffTolerance, diffTolerance, diffTolerance));
+
+		//	connectedComp.y = row;
+		//	int meanReadSum = 0;
+		//	int meanGreenSum = 0;
+		//	int meanBlueSum = 0;
+		//	int meanCount = connectedComp.width;
+		//	double meanRead = 0;
+		//	double meanGreen = 0;
+		//	double meanBlue = 0;
+
+		//	for (int meanX = x; meanX < x + connectedComp.width + 1; meanX++)
+		//	{
+		//		char* val = img->imageData + img->widthStep * row + meanX * 3;//CV_IMAGE_ELEM(img, int, row, meanX);
+		//		meanReadSum += (int)val[0];
+		//		meanGreenSum += (int)val[1];
+		//		meanBlueSum += (int)val[2];
+		//	}
+
+		//	meanRead = meanReadSum / meanCount;
+		//	meanGreen = meanGreenSum / meanCount;
+		//	meanBlue = meanBlueSum / meanCount;
+
+		//	colorIndex++;
+		//	LineSegment* lineSegment = new LineSegment();
+		//	lineSegment->Color = randomColor;
+		//	lineSegment->MeanRed = meanRead;
+		//	lineSegment->MeanGreen = meanGreen;
+		//	lineSegment->MeanBlue = meanBlue;
+		//	lineSegment->Rect = connectedComp;
+		//	lineSegments[row].push_back(lineSegment);
+		//	x = x + connectedComp.width + 1;
+		//}
+	}
+
+	cv::imwrite("floodfill-pre.bmp", outputMat);
+
+	int rows = lineSegments.size();
+	for (int row = 0; row < lineSegments.size(); row++)
+	{
+		std::vector<LineSegment*> rowComponents = lineSegments[row];
+		int topRow = row - 1;
+		int bottomRow = row + 1;
+
+		/*if (topRow >= 0)
+		{
+			std::vector<LineSegment> topComponents = lineSegments[topRow];
+			int topLastIndex = 0;
+
+			for (int segmentIndex = 0; segmentIndex < rowComponents.size(); segmentIndex++)
+			{
+				LineSegment segment = rowComponents[segmentIndex];
+				for (topLastIndex; topLastIndex <= topComponents.size(); topLastIndex++)
+				{
+					LineSegment topSegment = topComponents[topLastIndex];
+
+					if (topSegment.Rect.x <= (segment.Rect.x + segment.Rect.width)
+						&& (topSegment.Rect.x + topSegment.Rect.width) >= segment.Rect.x)
+					{
+						if (topSegment.Mean >= (segment.Mean - 30)
+							&& topSegment.Mean <= (segment.Mean + 30))
+						{
+							topSegment.Color = segment.Color;
+						}
+					}
+				}
+			}
+		}*/
+
+		if (bottomRow < rows)
+		{
+			std::vector<LineSegment*> bottomComponents = lineSegments[bottomRow];
+			int bottomLastIndex = 0;
+
+			for (int segmentIndex = 0; segmentIndex < rowComponents.size(); segmentIndex++)
+			{
+				LineSegment* segment = rowComponents[segmentIndex];
+				for (bottomLastIndex; bottomLastIndex < bottomComponents.size(); bottomLastIndex++)
+				{
+					LineSegment* bottomSegment = bottomComponents[bottomLastIndex];
+
+
+					if (bottomSegment->Rect.x <= (segment->Rect.x + segment->Rect.width)
+						&& (bottomSegment->Rect.x + bottomSegment->Rect.width) >= segment->Rect.x)
+					{
+						if (bottomSegment->MeanRed >= (segment->MeanRed - 50)
+							&& bottomSegment->MeanRed <= (segment->MeanRed + 50)
+							&&
+							bottomSegment->MeanGreen >= (segment->MeanGreen - 50)
+							&& bottomSegment->MeanGreen <= (segment->MeanGreen + 50)
+							&& 
+							bottomSegment->MeanBlue >= (segment->MeanBlue - 50)
+							&& bottomSegment->MeanBlue <= (segment->MeanBlue + 50))
+						{
+							bottomSegment->Color = segment->Color;
+							//bottomComponents[segmentIndex] = bottomSegment;
+						}
+						else
+						{
+
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+		}
+	}
+
+
+	for (int row = 0; row < lineSegments.size(); row++)
+	{
+		std::vector<LineSegment*> rowComponents = lineSegments[row];
+
+		for (int segmentIndex = 0; segmentIndex < rowComponents.size(); segmentIndex++)
+		{
+			LineSegment* segment = rowComponents[segmentIndex];
+			cv::rectangle(outputMat, segment->Rect, segment->Color);
+		}
+	}
+
+	cv::imwrite("floodfill.bmp", outputMat);
+}
+
+int FloodRow(cv::Mat row, cv::Point startPoint, double toleratedDiff)
+{
+	int width = 0;
+	std::vector<int> componentIndexes;
+	int meanRed = 0;
+	int meanGreen = 0;
+	int meanBlue = 0;
+	std::vector<LineSegment*> components;
+	int componentIndex = 0;
+
+	int x = startPoint.x;
+	cv::RNG rng(0xFFFFFFFF);
+
+	if (x < row.cols)
+	{
+		cv::Vec3b color = row.at<cv::Vec3b>(cv::Point(x, 0));
+		byte red = color.val[0]; //row.data + row.at(widthStep * 0 + x * 3;//CV_IMAGE_ELEM(img, int, row, meanX);
+		byte blue = color.val[1];
+		byte green = color.val[2];
+		meanRed = red;
+		meanGreen = green;
+		meanBlue = blue;
+		int icolor = (unsigned)rng;
+		cv::Scalar randomColor(icolor & 255, (icolor >> 8) & 255, (icolor >> 16) & 255);
+		LineSegment* lineSegment = new LineSegment();
+		lineSegment->Color = randomColor;
+		componentIndexes.push_back(x);
+		components.push_back(lineSegment);
+		components[0]->startX = x;
+	}
+
+	int gapSize = 0;
+	x++;
+	for (x; x < row.cols; x++)
+	{
+		int rightX = x;
+
+		double currMeanRed = meanRed / componentIndexes.size();
+		double currMeanGreen = meanGreen / componentIndexes.size();
+		double currMeanBlue = meanBlue / componentIndexes.size();
+
+		if (rightX < row.cols)
+		{
+			//cv::Vec3b color = row.at<cv::Vec3b>(cv::Point(x, 0));
+			//byte red = color.val[0]; //row.data + row.at(widthStep * 0 + x * 3;//CV_IMAGE_ELEM(img, int, row, meanX);
+			//byte green = color.val[1];
+			//byte blue = color.val[2];
+			
+
+			cv::Vec3b rightColor = row.at<cv::Vec3b>(cv::Point(rightX, 0));
+			byte rightRed = rightColor.val[0]; //row.data + row.at(widthStep * 0 + x * 3;//CV_IMAGE_ELEM(img, int, row, meanX);
+			byte rightGreen = rightColor.val[1];
+			byte rightBlue = rightColor.val[2];
+
+			int diffRed = rightRed - currMeanRed;
+			int diffGreen = rightGreen - currMeanGreen;
+			int diffBlue = rightBlue - currMeanBlue;
+			double distance = sqrt(diffRed*diffRed + diffGreen*diffGreen + diffBlue*diffBlue);
+
+			if (distance < toleratedDiff)
+			{
+				componentIndexes.push_back(rightX);
+				meanRed += rightRed;
+				meanGreen += rightGreen;
+				meanBlue += rightBlue;
+			}
+			else
+			{
+				gapSize++;
+
+				if (gapSize > 3)
+				{
+					int lastIndex = x - gapSize;
+					LineSegment* comp = components[componentIndex];
+					comp->Rect = cv::Rect(cv::Point(comp->startX, 0), cv::Point(lastIndex, 0));
+					comp->MeanRed = currMeanRed;
+					comp->MeanGreen = currMeanGreen;
+					comp->MeanBlue = currMeanBlue;
+					
+					x = x - gapSize + 1;
+					meanRed = 0;
+					meanGreen = 0;
+					meanBlue = 0;
+					LineSegment* lineSegment = new LineSegment();
+					int icolor = (unsigned)rng;
+					cv::Scalar randomColor(icolor & 255, (icolor >> 8) & 255, (icolor >> 16) & 255);
+					lineSegment->Color = randomColor;
+					components.push_back(lineSegment);
+					componentIndex++;
+					components[componentIndex]->startX = x;//x++
+					componentIndexes.clear(); 
+					componentIndexes.push_back(x);
+
+					cv::Vec3b color = row.at<cv::Vec3b>(cv::Point(x, 0));
+					byte red = color.val[0]; //row.data + row.at(widthStep * 0 + x * 3;//CV_IMAGE_ELEM(img, int, row, meanX);
+					byte blue = color.val[1];
+					byte green = color.val[2];
+					meanRed = red;
+					meanGreen = green;
+					meanBlue = blue;
+					gapSize = 0;
+				}
+			}
+		}		
+	}
+
+	for (int compIndex = 0; compIndex < components.size(); compIndex++)
+	{
+		LineSegment* comp = components[compIndex];
+		cv::rectangle(row, comp->Rect, comp->Color);
+	}
+
+	return width;
 }
 
 void strokeWidthTransform(IplImage * edgeImage, IplImage * gradientX,

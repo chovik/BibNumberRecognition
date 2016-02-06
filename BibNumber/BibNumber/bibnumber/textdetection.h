@@ -23,6 +23,15 @@
 
 #include <tesseract/baseapi.h>
 
+struct LineSegment {
+	cv::Rect Rect;
+	double MeanRed;
+	double MeanGreen;
+	double MeanBlue;
+	cv::Scalar Color;
+	int startX;
+};
+
 struct Point2d {
     int x;
     int y;
@@ -125,6 +134,9 @@ byte ToByte(float value);
 void GetNeighbours(Point2d point, std::vector<Point2d> & neighbours);
 int ComputeManhattanColorDistance(IplImage * img, Point2d center, float p);
 Point2d createPoint2d(int x, int y);
+void swtDepthMatrix(IplImage * img, IplImage * swtImage);
+void ImageSegmentationFloodFill(IplImage* img);
+int FloodRow(cv::Mat row, cv::Point startPoint, double toleratedDiff);
 
 
 namespace textdetection {

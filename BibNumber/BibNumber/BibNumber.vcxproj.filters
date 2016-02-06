@@ -19,6 +19,12 @@
     <Filter Include="Source Files\bibnumber">
       <UniqueIdentifier>{3ef6ad3e-d9fc-4b52-90f2-002831f160bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\FreeImageAlgorithms">
+      <UniqueIdentifier>{ad98e844-c021-4c27-812a-96a6cce5a45e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FreeImageAlgorithms">
+      <UniqueIdentifier>{8efa1798-87ab-4599-a1bb-e04389138edd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -51,6 +57,459 @@
     <ClInclude Include="bibnumber\train.h">
       <Filter>Header Files\bibnumber</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Robust-Text-Detection-master\Robust-Text-Detection-master\RobustTextDetection\ConnectedComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Robust-Text-Detection-master\Robust-Text-Detection-master\RobustTextDetection\RobustTextDetection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_dash.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_markers_term.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_smooth_poly1.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_stroke.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_vertex_sequence.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vertex_sequence.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vpgen_clip_polygon.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vpgen_clip_polyline.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vpgen_segmentator.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\Constants.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Arithmetic.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Colour.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Convolution.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Drawing.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_FFT.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Filters.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_HBitmap.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_IO.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_LinearScale.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Logic.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Morphology.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Palettes.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Particle.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Statistics.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Utilities.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Utils.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\kiss_fft.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\kiss_fftnd.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\profile.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\_kiss_fft_guts.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_alpha_mask_u8.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_arc.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_array.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_arrowhead.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_basics.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_bezier_arc.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_bitset_iterator.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_blur.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_bounding_rect.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_bspline.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_clip_liang_barsky.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_color_conv.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_color_conv_rgb8.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_color_conv_rgb16.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_color_gray.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_color_rgba.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_config.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_adaptor_vcgen.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_adaptor_vpgen.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_bspline.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_clip_polygon.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_clip_polyline.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_close_polygon.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_concat.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_contour.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_curve.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_dash.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_gpc.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_marker.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_marker_adaptor.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_segmentator.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_shorten_path.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_smooth_poly1.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_stroke.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_transform.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_conv_unclose_polygon.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_curves.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_dda_line.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_ellipse.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_ellipse_bresenham.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_embedded_raster_fonts.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_font_cache_manager.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_font_freetype.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_font_win32_tt.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_gamma_functions.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_gamma_lut.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_glyph_raster_bin.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_gradient_lut.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_gsv_text.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_image_accessors.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_image_filters.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_line_aa_basics.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_math.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_math_stroke.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_path_length.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_path_storage.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_path_storage_integer.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pattern_filters_rgba.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_amask_adaptor.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_gray.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_rgb.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_rgb_packed.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_rgba.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_pixfmt_transposer.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_cells_aa.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_compound_aa.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_outline.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_outline_aa.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_scanline_aa.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rasterizer_sl_clip.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_base.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_markers.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_mclip.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_outline_aa.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_outline_image.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_primitives.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_raster_text.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_renderer_scanline.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rendering_buffer.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rendering_buffer_dynarow.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_rounded_rect.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_bin.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_boolean_algebra.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_p.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_storage_aa.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_storage_bin.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_scanline_u.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_shorten_path.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_simul_eq.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_allocator.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_converter.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_gouraud.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_gouraud_gray.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_gouraud_rgba.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_gradient.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_gradient_alpha.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_image_filter.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_image_filter_gray.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_image_filter_rgb.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_image_filter_rgba.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_interpolator_adaptor.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_interpolator_linear.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_interpolator_persp.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_interpolator_trans.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_pattern_gray.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_pattern_rgb.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_pattern_rgba.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_solid.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_span_subdiv_adaptor.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_affine.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_bilinear.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_double_path.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_perspective.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_single_path.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_viewport.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_trans_warp_magnifier.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_bspline.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="bibnumber\FreeImageAlgorithms\agg_vcgen_contour.h">
+      <Filter>Header Files\FreeImageAlgorithms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -80,5 +539,181 @@
     <ClCompile Include="bibnumber\batch.cpp">
       <Filter>Source Files\bibnumber</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Robust-Text-Detection-master\Robust-Text-Detection-master\RobustTextDetection\ConnectedComponent.cpp">
+      <Filter>Source Files\bibnumber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Robust-Text-Detection-master\Robust-Text-Detection-master\RobustTextDetection\RobustTextDetection.cpp">
+      <Filter>Source Files\bibnumber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Robust-Text-Detection-master\Robust-Text-Detection-master\RobustTextDetection\main.cpp">
+      <Filter>Source Files\bibnumber</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\kiss_fft.c">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\kiss_fftnd.c">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\profile.c">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_arc.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_arrowhead.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_bezier_arc.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_bspline.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_curves.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_embedded_raster_fonts.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_font_freetype.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_font_win32_tt.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_gsv_text.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_image_filters.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_line_aa_basics.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_line_profile_aa.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_rounded_rect.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_sqrt_tables.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_trans_affine.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_trans_double_path.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_trans_single_path.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_trans_warp_magnifier.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_bspline.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_contour.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_dash.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_markers_term.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_smooth_poly1.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vcgen_stroke.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vpgen_clip_polygon.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vpgen_clip_polyline.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\agg_vpgen_segmentator.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Arithmetic.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Border.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Colour.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_ConvexHull.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Convolution.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_DistanceTransform.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Drawing.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_FFT.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_FillHole.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Filters.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_FindImageMaxima.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_FloodFill.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_GradientBlend.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_HBitmap.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_IO.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_LinearScale.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Logic.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_MedianFilter.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Morphology.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Palettes.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_ParticleInfo.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Statistics.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Threshold.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Utilities.cpp">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bibnumber\FreeImageAlgorithms\FreeImageAlgorithms_Convolution.txx">
+      <Filter>Source Files\FreeImageAlgorithms</Filter>
+    </None>
   </ItemGroup>
 </Project>
