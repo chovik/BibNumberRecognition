@@ -29,6 +29,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+//#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 #include <opencv/cxcore.h>
@@ -343,11 +344,15 @@ void TextDetector::detect(IplImage * input,
 	if (size.height > 0
 		&& size.width > 0)
 	{
-		ImageSegmentationFloodFill(input);
+		cv::Mat inputMat2(input, false);
+		cv::Mat outputMat1;
+		EdgePreservingSmoothingRGB(inputMat2);
+		//cv::GaussianBlur(input, input, cv::Size(5, 5), 0);
+		ImageSegmentationFloodFill(inputMat2);
 		// Convert to grayscale
 		IplImage * grayImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 		cvCvtColor(input, grayImage, CV_RGB2GRAY);
-		swtDepthMatrix(grayImage, NULL);
+		//swtDepthMatrix(grayImage, NULL);
 		IplImage * edgeSmoothedImage = cvCreateImage(cvGetSize(input), IPL_DEPTH_8U, 1);
 		EdgePreservingSmoothing(grayImage, edgeSmoothedImage);
 		cv::Mat edgeSmoothMat(edgeSmoothedImage, false);
@@ -542,16 +547,16 @@ void swtDepthMatrix(IplImage * img, IplImage * swtImage)
 
 }
 
-void ImageSegmentationFloodFill(IplImage* img)
+void ImageSegmentationFloodFill(cv::Mat img)
 { 
 	//IplImage* output = cvCloneImage(img);
-	cv::Mat outputMat(img, true);
+	cv::Mat outputMat = img.clone();
 	int colorIndex = 0;
 	cv::RNG rng(0xFFFFFFFF);
 	//connectedComp.
 	std::vector<std::vector<LineSegment*>> lineSegments;
-	double diffTolerance = 20;
-	for (int row = 0; row < img->height; row++)
+	double diffTolerance = 35;
+	for (int row = 0; row < img.rows; row++)
 	{
 		lineSegments.push_back(std::vector<LineSegment*>());
 		int x = 0;
@@ -561,8 +566,8 @@ void ImageSegmentationFloodFill(IplImage* img)
 		//	cv::Rect connectedComp;
 		//	int icolor = (unsigned)rng;
 		//	cv::Scalar randomColor(icolor & 255, (icolor >> 8) & 255, (icolor >> 16) & 255);
-		//	FloodRow(outputMat.row(row), cv::Point(x, 0), diffTolerance);
-		//	cv::floodFill(outputMat.row(row), cv::Point(x, 0), randomColor, &connectedComp, cv::Scalar(diffTolerance, diffTolerance, diffTolerance, diffTolerance), cv::Scalar(diffTolerance, diffTolerance, diffTolerance, diffTolerance));
+			//FloodRow(outputMat.row(row), cv::Point(x, 0), diffTolerance);
+			//cv::floodFill(outputMat.row(row), cv::Point(x, 0), randomColor, &connectedComp, cv::Scalar(diffTolerance, diffTolerance, diffTolerance, diffTolerance), cv::Scalar(diffTolerance, diffTolerance, diffTolerance, diffTolerance));
 
 		//	connectedComp.y = row;
 		//	int meanReadSum = 0;
@@ -762,7 +767,7 @@ int FloodRow(cv::Mat row, cv::Point startPoint, double toleratedDiff)
 				{
 					int lastIndex = x - gapSize;
 					LineSegment* comp = components[componentIndex];
-					comp->Rect = cv::Rect(cv::Point(comp->startX, 0), cv::Point(lastIndex, 0));
+					comp->Rect = cv::Rect(cv::Point(comp->startX, 0), cv::Point(lastIndex, 1));
 					comp->MeanRed = currMeanRed;
 					comp->MeanGreen = currMeanGreen;
 					comp->MeanBlue = currMeanBlue;
@@ -1117,6 +1122,114 @@ int ComputeManhattanColorDistance(IplImage * img, Point2d center, float p)
 
 	return newValue;
 }
+
+cv::Vec3b ComputeManhattanColorDistanceRGB(cv::Mat img, Point2d center, float p)
+{
+	std::vector<Point2d> neighbours;
+	GetNeighbours(center, neighbours);
+	cv::Vec3b rgbCenter = img.at<cv::Vec3b>(cv::Point(center.x, center.y));
+	float centerValueRed = rgbCenter[0];
+	float centerValueGreen = rgbCenter[1];
+	float centerValueBlue = rgbCenter[2];
+	std::vector<float> coeficients;
+	float sumCoeficients = 0;
+
+	for (int dIndex = 0; dIndex < 8; dIndex++)
+	{
+		Point2d point = neighbours[dIndex];
+		cv::Vec3b rgb = img.at<cv::Vec3b>(cv::Point(center.x, center.y));
+		int red = rgb[0];
+		int green = rgb[1];
+		int blue = rgb[2];
+
+		float d = (float)(abs(centerValueRed - red) + abs(centerValueGreen - green) + abs(centerValueBlue - blue)) / (3 * 255);
+		//float pointValue = CV_IMAGE_ELEM(img, byte, point.y, point.x);
+		//float d = abs(centerValue - pointValue) / 255.0;
+		float c = pow((1 - d), p);
+		coeficients.push_back(c);
+		sumCoeficients += c;
+	}
+
+	float newRed = 0;
+	float newGreen = 0;
+	float newBlue = 0;
+
+	for (int dIndex = 0; dIndex < 8; dIndex++)
+	{
+		Point2d point = neighbours[dIndex];
+		cv::Vec3b rgb = img.at<cv::Vec3b>(cv::Point(center.x, center.y));
+		float red = rgb[0];
+		float green = rgb[1];
+		float blue = rgb[2];
+
+		newRed += (int)round(coeficients[dIndex] * (1 / sumCoeficients) * red);
+		newGreen += (int)round(coeficients[dIndex] * (1 / sumCoeficients) * green);
+		newBlue += (int)round(coeficients[dIndex] * (1 / sumCoeficients) * blue);
+
+
+	}
+
+	if (newRed > 255)
+	{
+		newRed = 255;
+	}
+
+	if (newGreen > 255)
+	{
+		newGreen = 255;
+	}
+
+	if (newBlue > 255)
+	{
+		newBlue = 255;
+	}
+
+	return cv::Vec3b(newRed, newGreen, newBlue);
+}
+
+void EdgePreservingSmoothingRGB(cv::Mat img)
+{
+	int cols = img.cols;
+	int rows = img.rows;
+
+	for (int i = 0; i < 1; i++)
+	{
+		for (int rowIndex = 0; rowIndex < rows; rowIndex++)
+		{
+			for (int columnIndex = 0; columnIndex < cols; columnIndex++)
+			{
+				if (rowIndex == 0
+					|| rowIndex == rows - 1
+					|| columnIndex == 0
+					|| columnIndex == cols - 1)
+				{
+					cv::Vec3b color(0, 0, 0);
+					img.at<cv::Vec3b>(cv::Point(columnIndex, rowIndex)) = color;
+					//CV_IMAGE_ELEM(img, byte, rowIndex, columnIndex) = 0;
+					continue;
+				}
+
+				cv::Vec3b oldValue = img.at<cv::Vec3b>(cv::Point(columnIndex, rowIndex));
+				//byte oldValue = CV_IMAGE_ELEM(img, byte, rowIndex, columnIndex);
+
+				if (oldValue[0] == 0
+					&& oldValue[1] == 0
+					&& oldValue[2] == 0)
+				{
+					//var newValue = ComputeManhattanColorDistancesBW(img, new System.Drawing.Point(rowIndex, columnIndex), 10);
+					img.at<cv::Vec3b>(cv::Point(columnIndex, rowIndex)) = oldValue;
+				}
+				else
+				{
+					cv::Vec3b newValue = ComputeManhattanColorDistanceRGB(img, createPoint2d(columnIndex, rowIndex), 10);
+					
+					img.at<cv::Vec3b>(cv::Point(columnIndex, rowIndex)) = newValue; //CV_IMAGE_ELEM(output, byte, rowIndex, columnIndex) = ToByte(newValue);
+				}
+			}
+		}
+	}
+}
+
 
 void EdgePreservingSmoothing(IplImage * img, IplImage * output)
 {

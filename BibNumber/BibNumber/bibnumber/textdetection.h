@@ -135,8 +135,9 @@ void GetNeighbours(Point2d point, std::vector<Point2d> & neighbours);
 int ComputeManhattanColorDistance(IplImage * img, Point2d center, float p);
 Point2d createPoint2d(int x, int y);
 void swtDepthMatrix(IplImage * img, IplImage * swtImage);
-void ImageSegmentationFloodFill(IplImage* img);
+void ImageSegmentationFloodFill(cv::Mat img);
 int FloodRow(cv::Mat row, cv::Point startPoint, double toleratedDiff);
+void EdgePreservingSmoothingRGB(cv::Mat img);
 
 
 namespace textdetection {
